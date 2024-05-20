@@ -19,7 +19,7 @@ public class AdminController {
     @Autowired
     private AdminBusiness adminBusiness;
 
-    @PostMapping("/insert")
+    @PostMapping("")
     public ResponseEntity<AdminDtoData> insertAdmin(@RequestBody AdminDtoInsert adminDtoInsert){
         try {
             Admin admin = UtilityDto.convertTo(adminDtoInsert, Admin.class);
@@ -31,8 +31,19 @@ public class AdminController {
         }
     }
 
-    @GetMapping("/list")
-    public ResponseEntity<List<AdminDtoData>> listAdmins(){
+    @GetMapping("/{id}")
+    public ResponseEntity<AdminDtoData> listAdminByIdD(@PathVariable Integer id){
+        try {
+            Admin admin = adminBusiness.listAdminById(id);
+            AdminDtoData adminDtoData = UtilityDto.convertTo(admin, AdminDtoData.class);
+            return new ResponseEntity<>(adminDtoData, HttpStatus.OK);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error listing the admin: " + e.getMessage(), e);
+        }
+    }
+
+    @GetMapping("")
+    public ResponseEntity<List<AdminDtoData>> listAdmins() {
         try {
             List<Admin> listAdmins = adminBusiness.listAdmins();
             List<AdminDtoData> adminDtoDataList = UtilityDto.convertToList(listAdmins, AdminDtoData.class);
@@ -42,7 +53,7 @@ public class AdminController {
         }
     }
 
-    @PutMapping("/edit/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<AdminDtoData> updateAdmin(@RequestBody AdminDtoInsert adminDtoInsert, @PathVariable Integer id){
         try {
             System.out.println("Fernando 1: " + adminDtoInsert);
@@ -58,7 +69,7 @@ public class AdminController {
         }
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public void delete(@PathVariable Integer id) {
         try {
             adminBusiness.deleteAdmin(id);

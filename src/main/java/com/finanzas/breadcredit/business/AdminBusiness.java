@@ -15,27 +15,41 @@ public class AdminBusiness {
     @Autowired
     private UserRepository userRepository;
 
-    public Admin insertAdmin(Admin adminSubmitted) throws Exception{
-        if (adminRepository.findByUserEmail(adminSubmitted.getUser().getEmail()) != null) {
+    public Admin insertAdmin(Admin adminIn) throws Exception {
+        if (userRepository.findUserByEmail(adminIn.getUser().getEmail()) != null) {
             throw new Exception("Email already exists");
         }
-        if (adminRepository.findByUserDni(adminSubmitted.getUser().getEmail()) != null) {
+        if (userRepository.findUserByDni(adminIn.getUser().getDni()) != null) {
             throw new Exception("Dni already exists");
         }
-        return adminRepository.save(adminSubmitted);
+        return adminRepository.save(adminIn);
+    }
+
+    public Admin listAdminById(Integer id) {
+        return adminRepository.findAdminById(id);
     }
 
     public List<Admin> listAdmins() {
         return adminRepository.findAll();
     }
 
-    public Admin updateAdmin(Admin adminSubmitted) throws Exception{
-        System.out.println("Fernando 3: " +  adminSubmitted);
-        if (adminSubmitted.getId() == null){
+    public Admin updateAdmin(Admin adminIn) throws Exception {
+        Admin adminCurrent = adminRepository.findAdminById(adminIn.getId());
+        if (userRepository.findUserByEmail(adminIn.getUser().getEmail()) != null) {
+            if(!userRepository.findUserByEmail(adminIn.getUser().getEmail()).getId().equals(adminCurrent.getUser().getId())){
+                throw new Exception("Email already exists");
+            }
+        }
+        if (userRepository.findUserByDni(adminIn.getUser().getDni()) != null) {
+            if(!userRepository.findUserByDni(adminIn.getUser().getDni()).getId().equals(adminCurrent.getUser().getId()) ){
+                throw new Exception("Dni already exists");
+            }
+        }
+        if (adminIn.getId() == null || adminIn.getId() == 0){
             throw new Exception("ID not present");
         }
-        userRepository.save(adminSubmitted.getUser());
-        return adminRepository.save(adminSubmitted);
+        userRepository.save(adminIn.getUser());
+        return adminRepository.save(adminIn);
     }
 
     public void deleteAdmin(Integer id) throws Exception{
@@ -44,5 +58,6 @@ public class AdminBusiness {
             throw new Exception("Admin not found");
         }
         adminRepository.delete(admin);
+        userRepository.delete(admin.getUser());
     }
 }
