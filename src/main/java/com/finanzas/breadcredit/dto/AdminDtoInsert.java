@@ -13,6 +13,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @ToString
 public class AdminDtoInsert implements Serializable {
+    Integer id;
     UserDtoInsert user;
     String businessName;
     String businessType;

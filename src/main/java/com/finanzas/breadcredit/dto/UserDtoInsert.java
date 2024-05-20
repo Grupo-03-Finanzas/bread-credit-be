@@ -13,6 +13,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @ToString
 public class UserDtoInsert implements Serializable {
+    Integer id;
     String firstName;
     String lastName;
     String dni;
