@@ -4,7 +4,7 @@ import com.finanzas.breadcredit.business.AdminBusiness;
 import com.finanzas.breadcredit.dto.AdminDtoData;
 import com.finanzas.breadcredit.dto.AdminDtoInsert;
 import com.finanzas.breadcredit.entity.Admin;
-import org.modelmapper.ModelMapper;
+import com.finanzas.breadcredit.utility.UtilityDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,9 +22,9 @@ public class AdminController {
     @PostMapping("/insert")
     public ResponseEntity<AdminDtoData> insertAdmin(@RequestBody AdminDtoInsert adminDtoInsert){
         try {
-            Admin admin = convertTo(adminDtoInsert, Admin.class);
+            Admin admin = UtilityDto.convertTo(adminDtoInsert, Admin.class);
             admin = adminBusiness.insertAdmin(admin);
-            AdminDtoData adminDtoData = convertTo(admin, AdminDtoData.class);
+            AdminDtoData adminDtoData = UtilityDto.convertTo(admin, AdminDtoData.class);
             return new ResponseEntity<>(adminDtoData, HttpStatus.CREATED);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error inserting the admin: " + e.getMessage(), e);
@@ -35,9 +35,7 @@ public class AdminController {
     public ResponseEntity<List<AdminDtoData>> listAdmins(){
         try {
             List<Admin> listAdmins = adminBusiness.listAdmins();
-            List<AdminDtoData> adminDtoDataList = listAdmins.stream()
-                    .map(admin -> convertTo(admin, AdminDtoData.class))
-                    .toList();
+            List<AdminDtoData> adminDtoDataList = UtilityDto.convertToList(listAdmins, AdminDtoData.class);
             return ResponseEntity.ok(adminDtoDataList);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error listing the admins: " + e.getMessage(), e);
@@ -48,12 +46,12 @@ public class AdminController {
     public ResponseEntity<AdminDtoData> updateAdmin(@RequestBody AdminDtoInsert adminDtoInsert, @PathVariable Integer id){
         try {
             System.out.println("Fernando 1: " + adminDtoInsert);
-            Admin admin = convertTo(adminDtoInsert, Admin.class);
+            Admin admin = UtilityDto.convertTo(adminDtoInsert, Admin.class);
             admin.setId(id);
             admin.getUser().setId(id);
             System.out.println("Fernando 2: " + admin);
             admin = adminBusiness.updateAdmin(admin);
-            AdminDtoData adminDtoData = convertTo(admin, AdminDtoData.class);
+            AdminDtoData adminDtoData = UtilityDto.convertTo(admin, AdminDtoData.class);
             return new ResponseEntity<>(adminDtoData, HttpStatus.OK);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error updating the admin: " + e.getMessage(), e);
@@ -69,8 +67,4 @@ public class AdminController {
         }
     }
 
-    private <T, U> U convertTo(T source, Class<U> targetClass) {
-        ModelMapper modelMapper = new ModelMapper();
-        return modelMapper.map(source, targetClass);
-    }
 }
