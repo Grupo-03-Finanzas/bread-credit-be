@@ -16,66 +16,74 @@ import java.util.List;
 @RestController
 @RequestMapping("/admin")
 public class AdminController {
+
     @Autowired
     private AdminBusiness adminBusiness;
 
     @PostMapping("")
-    public ResponseEntity<AdminDtoData> insertAdmin(@RequestBody AdminDtoInsert adminDtoInsert){
+    public ResponseEntity<AdminDtoData> insertAdmin(@RequestBody AdminDtoInsert adminDtoInsert) {
+        Admin admin = UtilityDto.convertTo(adminDtoInsert, Admin.class);
+
         try {
-            Admin admin = UtilityDto.convertTo(adminDtoInsert, Admin.class);
             admin = adminBusiness.insertAdmin(admin);
-            AdminDtoData adminDtoData = UtilityDto.convertTo(admin, AdminDtoData.class);
-            return new ResponseEntity<>(adminDtoData, HttpStatus.CREATED);
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error inserting the admin: " + e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
         }
+
+        AdminDtoData adminDtoData = UtilityDto.convertTo(admin, AdminDtoData.class);
+        return new ResponseEntity<>(adminDtoData, HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<AdminDtoData> listAdminByIdD(@PathVariable Integer id){
+    public ResponseEntity<AdminDtoData> getAdminById(@PathVariable Integer id) {
+        Admin admin;
+
         try {
-            Admin admin = adminBusiness.listAdminById(id);
-            AdminDtoData adminDtoData = UtilityDto.convertTo(admin, AdminDtoData.class);
-            return new ResponseEntity<>(adminDtoData, HttpStatus.OK);
+            admin = adminBusiness.getAdminById(id);
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error listing the admin: " + e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
+
+        AdminDtoData adminDtoData = UtilityDto.convertTo(admin, AdminDtoData.class);
+        return new ResponseEntity<>(adminDtoData, HttpStatus.OK);
     }
 
     @GetMapping("")
     public ResponseEntity<List<AdminDtoData>> listAdmins() {
+        List<Admin> listAdmins;
+
         try {
-            List<Admin> listAdmins = adminBusiness.listAdmins();
-            List<AdminDtoData> adminDtoDataList = UtilityDto.convertToList(listAdmins, AdminDtoData.class);
-            return ResponseEntity.ok(adminDtoDataList);
+            listAdmins = adminBusiness.listAdmins();
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error listing the admins: " + e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
+
+        List<AdminDtoData> adminDtoDataList = UtilityDto.convertToList(listAdmins, AdminDtoData.class);
+        return new ResponseEntity<>(adminDtoDataList, HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<AdminDtoData> updateAdmin(@RequestBody AdminDtoInsert adminDtoInsert, @PathVariable Integer id){
+    public ResponseEntity<AdminDtoData> updateAdmin(@PathVariable Integer id, @RequestBody AdminDtoInsert adminDtoInsert) {
+        Admin admin = UtilityDto.convertTo(adminDtoInsert, Admin.class);
+
         try {
-            System.out.println("Fernando 1: " + adminDtoInsert);
-            Admin admin = UtilityDto.convertTo(adminDtoInsert, Admin.class);
-            admin.setId(id);
-            admin.getUser().setId(id);
-            System.out.println("Fernando 2: " + admin);
-            admin = adminBusiness.updateAdmin(admin);
-            AdminDtoData adminDtoData = UtilityDto.convertTo(admin, AdminDtoData.class);
-            return new ResponseEntity<>(adminDtoData, HttpStatus.OK);
+            admin = adminBusiness.updateAdmin(id, admin);
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error updating the admin: " + e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,e.getMessage());
         }
+
+        AdminDtoData adminDtoData = UtilityDto.convertTo(admin, AdminDtoData.class);
+        return new ResponseEntity<>(adminDtoData, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Integer id) {
+    public ResponseEntity<Void> delete(@PathVariable Integer id) {
         try {
             adminBusiness.deleteAdmin(id);
-        } catch (Exception e){
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error deleting the admin: " + e.getMessage());
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
-    }
 
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

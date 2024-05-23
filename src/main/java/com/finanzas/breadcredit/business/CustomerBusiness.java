@@ -5,60 +5,72 @@ import com.finanzas.breadcredit.repository.CustomerRepository;
 import com.finanzas.breadcredit.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 public class CustomerBusiness {
+
     @Autowired
     private CustomerRepository customerRepository;
+
     @Autowired
     private UserRepository userRepository;
 
-    public Customer insertCustomer(Customer customerIn) throws Exception {
-        if (userRepository.findUserByEmail(customerIn.getUser().getEmail()) != null) {
-            throw new Exception("Email already exists");
+    public Customer insertCustomer(Customer customer) throws Exception {
+        if(userRepository.existsByEmail(customer.getUser().getEmail())) {
+            throw new Exception("Email Already Exists");
         }
-        if (userRepository.findUserByDni(customerIn.getUser().getDni()) != null) {
-            throw new Exception("Dni already exists");
+        if(userRepository.existsByDni(customer.getUser().getDni())) {
+            throw new Exception("Dni Already Exists");
         }
-        return customerRepository.save(customerIn);
+
+        return customerRepository.save(customer);
     }
 
-    public Customer listCustomerById(Integer id) {
-        return customerRepository.findCustomerById(id);
+    public Customer getCustomerById(Integer id) throws Exception{
+        return customerRepository.findById(id).orElseThrow(() -> new Exception("Customer not found"));
     }
 
-    public List<Customer> listCustomers(){
-        return customerRepository.findAll();
+    public List<Customer> listCustomers() throws Exception {
+        List<Customer> customerList = customerRepository.findAll();
+
+        //if (customerList.isEmpty()) {
+        //    throw new Exception("Customers not found");
+        //}
+
+        return customerList;
     }
 
-    public Customer updateCustomer(Customer customerIn) throws Exception {
-        Customer customerCurrent = customerRepository.findCustomerById(customerIn.getId());
-        if (userRepository.findUserByEmail(customerIn.getUser().getEmail()) != null) {
-            if(!userRepository.findUserByEmail(customerIn.getUser().getEmail()).getId().equals(customerCurrent.getUser().getId())){
-                throw new Exception("Email already exists");
-            }
-        }
-        if (userRepository.findUserByDni(customerIn.getUser().getDni()) != null) {
-            if(!userRepository.findUserByDni(customerIn.getUser().getDni()).getId().equals(customerCurrent.getUser().getId()) ){
-                throw new Exception("Dni already exists");
-            }
-        }
-        if (customerIn.getId() == null || customerIn.getId() == 0){
-            throw new Exception("ID not present");
-        }
-        userRepository.save(customerIn.getUser());
-        return customerRepository.save(customerIn);
-    }
+    @Transactional
+    public Customer updateCustomer(Integer id, Customer customer) throws Exception {
+        customer.setId(id);
+        customer.getUser().setId(id);
 
-    public void deleteCustomer (Integer id) throws Exception {
-        Customer customer = customerRepository.findCustomerById(id);
-        if (customer == null) {
+        if (!customerRepository.existsById(customer.getId())) {
             throw new Exception("Customer not found");
         }
-        customerRepository.delete(customer);
-        userRepository.delete(customer.getUser());
+        Customer customerExists = customerRepository.findById(customer.getId()).orElse(new Customer());
+        if (!customerExists.getUser().getEmail().equals(customer.getUser().getEmail())) {
+            if(userRepository.existsByEmail(customer.getUser().getEmail())) {
+                throw new Exception("Email Already Exists");
+            }
+        }
+        if (!customerExists.getUser().getDni().equals(customer.getUser().getDni())) {
+            if(userRepository.existsByDni(customer.getUser().getDni())) {
+                throw new Exception("Dni Already Exists");
+            }
+        }
+
+        userRepository.save(customer.getUser());
+        return customerRepository.save(customer);
     }
 
+    @Transactional
+    public void deleteCustomer(Integer id) throws Exception {
+        Customer customerCurrent = customerRepository.findById(id).orElseThrow(() -> new Exception("Customer not found"));
+        customerRepository.delete(customerCurrent);
+        userRepository.delete(customerCurrent.getUser());
+    }
 }

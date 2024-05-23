@@ -5,58 +5,72 @@ import com.finanzas.breadcredit.repository.AdminRepository;
 import com.finanzas.breadcredit.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 public class AdminBusiness {
+
     @Autowired
     private AdminRepository adminRepository;
+
     @Autowired
     private UserRepository userRepository;
 
-    public Admin insertAdmin(Admin adminIn) throws Exception {
-        if (userRepository.findUserByEmail(adminIn.getUser().getEmail()) != null) {
-            throw new Exception("Email already exists");
+
+    public Admin insertAdmin(Admin admin) throws Exception {
+        if(userRepository.existsByEmail(admin.getUser().getEmail())) {
+            throw new Exception("Email Already Exists");
         }
-        if (userRepository.findUserByDni(adminIn.getUser().getDni()) != null) {
-            throw new Exception("Dni already exists");
+        if(userRepository.existsByDni(admin.getUser().getDni())) {
+            throw new Exception("Dni Already Exists");
         }
-        return adminRepository.save(adminIn);
+
+        return adminRepository.save(admin);
     }
 
-    public Admin listAdminById(Integer id) {
-        return adminRepository.findAdminById(id);
+    public Admin getAdminById(Integer id) throws Exception{
+        return adminRepository.findById(id).orElseThrow(() -> new Exception("Admin not found"));
     }
 
-    public List<Admin> listAdmins() {
-        return adminRepository.findAll();
+    public List<Admin> listAdmins() throws Exception {
+        List<Admin> adminList = adminRepository.findAll();
+
+        //if (adminList.isEmpty()) {
+        //    throw new Exception("Admins not found");
+        //}
+
+        return adminList;
     }
 
-    public Admin updateAdmin(Admin adminIn) throws Exception {
-        Admin adminCurrent = adminRepository.findAdminById(adminIn.getId());
-        if (userRepository.findUserByEmail(adminIn.getUser().getEmail()) != null) {
-            if(!userRepository.findUserByEmail(adminIn.getUser().getEmail()).getId().equals(adminCurrent.getUser().getId())){
-                throw new Exception("Email already exists");
-            }
-        }
-        if (userRepository.findUserByDni(adminIn.getUser().getDni()) != null) {
-            if(!userRepository.findUserByDni(adminIn.getUser().getDni()).getId().equals(adminCurrent.getUser().getId()) ){
-                throw new Exception("Dni already exists");
-            }
-        }
-        if (adminIn.getId() == null || adminIn.getId() == 0){
-            throw new Exception("ID not present");
-        }
-        userRepository.save(adminIn.getUser());
-        return adminRepository.save(adminIn);
-    }
+    @Transactional
+    public Admin updateAdmin(Integer id, Admin admin) throws Exception {
+        admin.setId(id);
+        admin.getUser().setId(id);
 
-    public void deleteAdmin(Integer id) throws Exception{
-        Admin admin = adminRepository.findAdminById(id);
-        if (admin == null){
+        if (!adminRepository.existsById(admin.getId())) {
             throw new Exception("Admin not found");
         }
+        Admin adminExists = adminRepository.findById(admin.getId()).orElse(new Admin());
+        if (!adminExists.getUser().getEmail().equals(admin.getUser().getEmail())) {
+            if(userRepository.existsByEmail(admin.getUser().getEmail())) {
+                throw new Exception("Email Already Exists");
+            }
+        }
+        if (!adminExists.getUser().getDni().equals(admin.getUser().getDni())) {
+            if(userRepository.existsByDni(admin.getUser().getDni())) {
+                throw new Exception("Dni Already Exists");
+            }
+        }
+
+        userRepository.save(admin.getUser());
+        return adminRepository.save(admin);
+    }
+
+    @Transactional
+    public void deleteAdmin(Integer id) throws Exception {
+        Admin admin = adminRepository.findById(id).orElseThrow(() -> new Exception("Admin not found"));
         adminRepository.delete(admin);
         userRepository.delete(admin.getUser());
     }

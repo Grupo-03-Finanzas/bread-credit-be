@@ -16,64 +16,74 @@ import java.util.List;
 @RestController
 @RequestMapping("/customer")
 public class CustomerController {
+
     @Autowired
     private CustomerBusiness customerBusiness;
 
     @PostMapping("")
-    public ResponseEntity<CustomerDtoData> insertCustomer(@RequestBody CustomerDtoInsert customerDtoInsert){
+    public ResponseEntity<CustomerDtoData> insertCustomer(@RequestBody CustomerDtoInsert customerDtoInsert) {
+        Customer customer = UtilityDto.convertTo(customerDtoInsert, Customer.class);
+
         try {
-            Customer customer = UtilityDto.convertTo(customerDtoInsert, Customer.class);
             customer = customerBusiness.insertCustomer(customer);
-            CustomerDtoData customerDtoData = UtilityDto.convertTo(customer, CustomerDtoData.class);
-            return new ResponseEntity<>(customerDtoData, HttpStatus.CREATED);
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error inserting the customer: " + e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.CONFLICT,e.getMessage(), e);
         }
+
+        CustomerDtoData customerDtoData = UtilityDto.convertTo(customer, CustomerDtoData.class);
+        return new ResponseEntity<>(customerDtoData, HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CustomerDtoData> listCustomerByIdD(@PathVariable Integer id){
+    public ResponseEntity<CustomerDtoData> getCustomerById(@PathVariable Integer id) {
+        Customer customer;
+
         try {
-            Customer customer = customerBusiness.listCustomerById(id);
-            CustomerDtoData customerDtoData = UtilityDto.convertTo(customer, CustomerDtoData.class);
-            return new ResponseEntity<>(customerDtoData, HttpStatus.OK);
+            customer = customerBusiness.getCustomerById(id);
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error listing the customer: " + e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage(), e);
         }
+
+        CustomerDtoData customerDtoData = UtilityDto.convertTo(customer, CustomerDtoData.class);
+        return new ResponseEntity<>(customerDtoData, HttpStatus.OK);
     }
 
     @GetMapping("")
-    public ResponseEntity<List<CustomerDtoData>> listCustomers() {
+    public ResponseEntity<List<CustomerDtoData>> getCustomers() {
+        List<Customer> listCustomers;
+
         try {
-            List<Customer> listCustomers = customerBusiness.listCustomers();
-            List<CustomerDtoData> customerDtoDataList = UtilityDto.convertToList(listCustomers, CustomerDtoData.class);
-            return ResponseEntity.ok(customerDtoDataList);
+            listCustomers = customerBusiness.listCustomers();
+
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error listing the customers: " + e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
+
+        List<CustomerDtoData> customerDtoDataList = UtilityDto.convertToList(listCustomers, CustomerDtoData.class);
+        return new ResponseEntity<>(customerDtoDataList, HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CustomerDtoData> updateCustomer(@RequestBody CustomerDtoInsert customerDtoInsert, @PathVariable Integer id){
+    public ResponseEntity<CustomerDtoData> updateCustomer(@PathVariable Integer id ,@RequestBody CustomerDtoInsert customerDtoInsert) {
+        Customer customer = UtilityDto.convertTo(customerDtoInsert, Customer.class);
+
         try {
-            Customer customer = UtilityDto.convertTo(customerDtoInsert, Customer.class);
-            customer.setId(id);
-            customer.getUser().setId(id);
-            customer = customerBusiness.updateCustomer(customer);
-            CustomerDtoData customerDtoData = UtilityDto.convertTo(customer, CustomerDtoData.class);
-            return new ResponseEntity<>(customerDtoData, HttpStatus.OK);
+            customer = customerBusiness.updateCustomer(id, customer);
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error updating the customer: " + e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
+
+        CustomerDtoData customerDtoData = UtilityDto.convertTo(customer, CustomerDtoData.class);
+        return new ResponseEntity<>(customerDtoData, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Integer id) {
+    public ResponseEntity<Void> delete(@PathVariable Integer id) {
         try {
             customerBusiness.deleteCustomer(id);
-        } catch (Exception e){
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error deleting the customer: " + e.getMessage());
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
+        return new ResponseEntity<>(HttpStatus.OK);
     }
-
 }

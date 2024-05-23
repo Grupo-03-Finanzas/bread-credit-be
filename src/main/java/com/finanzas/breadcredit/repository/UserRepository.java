@@ -4,6 +4,6 @@ import com.finanzas.breadcredit.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UserRepository extends JpaRepository<User, Integer> {
-    User findUserByEmail(String email);
-    User findUserByDni(String dni);
+    Boolean existsByEmail(String email);
+    Boolean existsByDni(String dni);
 }
