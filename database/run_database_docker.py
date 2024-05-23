@@ -52,19 +52,29 @@ def main():
     database = "breaddatabase"
 
     if check_container_exists(container_name):
-        user_input = input(f"Container {container_name} already exists. Do you want to remove it and create a new one? (y/n): ")
-        if user_input.lower() == 'y':
-            remove_container(container_name)
-            create_container(container_name, user, password, database)
+        if check_container_running(container_name):
+            print(f"Container {container_name} already exists and is running.")
+            user_input = input(f"Do you want to remove it and create a new one? (y/n): ")
+            if user_input.lower() == 'y':
+                remove_container(container_name)
+                create_container(container_name, user, password, database)
+            else:
+                print("No action was taken.")
         else:
-            if not check_container_running(container_name):
-                user_input = input(f"Container {container_name} is not running. Do you want to start it? (y/n): ")
+            print(f"Container {container_name} already exists but is not running.")
+            user_input = input(f"Do you want to run it instead of creating a new one? (y/n): ")
+            if user_input.lower() == 'y':
+                start_container(container_name)
+            else:
+                user_input = input(f"Do you want to remove it and create a new one? (y/n): ")
                 if user_input.lower() == 'y':
-                    start_container(container_name)
+                    remove_container(container_name)
+                    create_container(container_name, user, password, database)
                 else:
-                    print("Container was not started.")
+                    print("No action was taken.")
     else:
         create_container(container_name, user, password, database)
+
 
 if __name__ == "__main__":
     main()
