@@ -1,6 +1,8 @@
-package com.finanzas.breadcredit.dto;
+package com.finanzas.breadcredit.dto.creditaccount;
 
-import lombok.Value;
+import com.finanzas.breadcredit.dto.customer.CustomerDtoData;
+import com.finanzas.breadcredit.dto.admin.AdminDtoData;
+import lombok.*;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -8,11 +10,15 @@ import java.math.BigDecimal;
 /**
  * DTO for {@link com.finanzas.breadcredit.entity.Creditaccount}
  */
-@Value
-public class CreditaccountDtoInsert implements Serializable {
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
+public class CreditaccountDtoData implements Serializable {
     Integer id;
-    CustomerDtoInsert customer;
-    AdminDtoInsert admin;
+    CustomerDtoData customer;
+    AdminDtoData admin;
     Boolean active;
     BigDecimal maxCredit;
     BigDecimal currentCredit;

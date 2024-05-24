@@ -1,4 +1,4 @@
-package com.finanzas.breadcredit.dto;
+package com.finanzas.breadcredit.dto.user;
 
 import lombok.*;
 
@@ -12,7 +12,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class UserDtoInsert implements Serializable {
+public class UserDtoData implements Serializable {
     Integer id;
     String firstName;
     String lastName;

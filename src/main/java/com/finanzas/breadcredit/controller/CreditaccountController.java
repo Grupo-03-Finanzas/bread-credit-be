@@ -1,8 +1,8 @@
 package com.finanzas.breadcredit.controller;
 
 import com.finanzas.breadcredit.business.CreditaccountBusiness;
-import com.finanzas.breadcredit.dto.CreditaccountDtoData;
-import com.finanzas.breadcredit.dto.CreditaccountDtoInsert;
+import com.finanzas.breadcredit.dto.creditaccount.CreditaccountDtoData;
+import com.finanzas.breadcredit.dto.creditaccount.CreditaccountDtoInsert;
 import com.finanzas.breadcredit.entity.Creditaccount;
 import com.finanzas.breadcredit.utility.UtilityDto;
 import org.springframework.beans.factory.annotation.Autowired;

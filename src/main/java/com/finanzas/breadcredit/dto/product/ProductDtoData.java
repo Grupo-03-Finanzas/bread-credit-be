@@ -1,5 +1,6 @@
-package com.finanzas.breadcredit.dto;
+package com.finanzas.breadcredit.dto.product;
 
+import com.finanzas.breadcredit.dto.admin.AdminDtoData;
 import lombok.*;
 
 import java.io.Serializable;
