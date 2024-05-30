@@ -1,0 +1,126 @@
+{
+	"info": {
+		"_postman_id": "8dd088a0-31a4-4429-b9b3-896be80c0d16",
+		"name": "5_Purchase",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "27524141"
+	},
+	"item": [
+		{
+			"name": "insertPurchase",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"id\": 12345,\r\n  \"creditaccount\": {\r\n    \"id\": 1\r\n  },\r\n  \"initialCost\": 30,\r\n  \"time\": \"2024-05-30T14:35:45Z\",\r\n  \"installmentNumber\": 12,\r\n  \"creditRateType\": \"TEM\",\r\n  \"creditRate\": 0.05,\r\n  \"creditCompouding\": 0,\r\n  \"penaltyRateType\": \"TEM\",\r\n  \"penaltyRate\": 0.02,\r\n  \"penaltyCompouding\": 0,\r\n  \"compensatoryRateType\": \"TEM\",\r\n  \"compensatoryRate\": 0.03,\r\n  \"compensatoryCompouding\": 0\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/purchase",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"purchase"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getPurchases",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/purchase",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"purchase"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "updatePurchase",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"id\": 2,\r\n  \"creditaccount\": {\r\n    \"id\": 1\r\n  },\r\n  \"initialCost\": 40,\r\n  \"time\": \"2024-05-30T14:35:45Z\",\r\n  \"installmentNumber\": 12,\r\n  \"creditRateType\": \"TEM\",\r\n  \"creditRate\": 0.05,\r\n  \"creditCompouding\": 0,\r\n  \"penaltyRateType\": \"TEM\",\r\n  \"penaltyRate\": 0.02,\r\n  \"penaltyCompouding\": 0,\r\n  \"compensatoryRateType\": \"TEM\",\r\n  \"compensatoryRate\": 0.03,\r\n  \"compensatoryCompouding\": 0\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/purchase/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"purchase",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "deletePurchase",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/purchase/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"purchase",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getPurchaseById",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/purchase/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"purchase",
+						"1"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

@@ -13,7 +13,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"customer\": {\r\n    \"id\": 4\r\n  },\r\n  \"admin\": {\r\n    \"id\": 3\r\n  },\r\n  \"active\": true,\r\n  \"maxCredit\": 300,\r\n  \"currentCredit\": 0,\r\n  \"creditTypeOfRate\": \"TEA\",\r\n  \"creditRate\": 0.05,\r\n  \"creditCompounding\": 0,\r\n  \"invoicePenaltyRateType\": \"TEA\",\r\n  \"invoicePenaltyRate\": 0.02,\r\n  \"invoicePenaltyCompouding\": 0,\r\n  \"installmentPenaltyRateType\": \"TEA\",\r\n  \"installmentPenaltyRate\": 0.03,\r\n  \"installmentPenaltyCompouding\": 0,\r\n  \"invoiceCompensatoryRateType\": \"TEA\",\r\n  \"invoiceCompensatoryRate\": 0.01,\r\n  \"invoiceCompensatoryCompouding\": 0,\r\n  \"installmentCompensatoryRateType\": \"TEA\",\r\n  \"installmentCompensatoryRate\": 0.015,\r\n  \"installmentCompensatoryCompouding\": 0\r\n}\r\n",
+					"raw": "{\r\n  \"customer\": {\r\n    \"id\": 2\r\n  },\r\n  \"admin\": {\r\n    \"id\": 1\r\n  },\r\n  \"active\": true,\r\n  \"maxCredit\": 300,\r\n  \"currentCredit\": 0,\r\n  \"creditTypeOfRate\": \"TEA\",\r\n  \"creditRate\": 0.05,\r\n  \"creditCompounding\": 0,\r\n  \"invoicePenaltyRateType\": \"TEA\",\r\n  \"invoicePenaltyRate\": 0.02,\r\n  \"invoicePenaltyCompouding\": 0,\r\n  \"installmentPenaltyRateType\": \"TEA\",\r\n  \"installmentPenaltyRate\": 0.03,\r\n  \"installmentPenaltyCompouding\": 0,\r\n  \"invoiceCompensatoryRateType\": \"TEA\",\r\n  \"invoiceCompensatoryRate\": 0.01,\r\n  \"invoiceCompensatoryCompouding\": 0,\r\n  \"installmentCompensatoryRateType\": \"TEA\",\r\n  \"installmentCompensatoryRate\": 0.015,\r\n  \"installmentCompensatoryCompouding\": 0\r\n}\r\n",
 					"options": {
 						"raw": {
 							"language": "json"
