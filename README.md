@@ -1,7 +1,8 @@
 # Backend de la aplicación web BreadCredit
 ## Configuración para el desarrollo
-- Iniciar docker y ejecutar `py.exe .\database\run_database_docker.py` para iniciar la base de datos
-- Correr BreadCreditBeApplication
+- Usar `docker-compose build` para compilar.
+- Usar `docker-compose up` para correr el proyecto y `Ctrl + c` para detener.
+- Opcional para correr en segundo plano, usar `docker-compose up -d` para correr el proyecto y `docker-compose down` para detenerlo. 
 
 ## Pruebas del API
 - Importar colecciones de postman en `.\postman\`
