@@ -6,6 +6,7 @@
 
 ## Pruebas del API
 - Importar colecciones de postman en `.\postman\`
+- Swagger UI: http://localhost:8080/swagger-ui/index.html
 
 ## Algunas consideraciones acerca del proyecto
 - IntelliJ IDEA 2024.1 (Ultimate Edition)
