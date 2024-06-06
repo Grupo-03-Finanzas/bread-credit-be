@@ -3,6 +3,7 @@ package com.finanzas.breadcredit.controller;
 import com.finanzas.breadcredit.business.AdminBusiness;
 import com.finanzas.breadcredit.dto.admin.AdminDtoData;
 import com.finanzas.breadcredit.dto.admin.AdminDtoInsert;
+import com.finanzas.breadcredit.dto.admin.AdminDtoLogin;
 import com.finanzas.breadcredit.entity.Admin;
 import com.finanzas.breadcredit.utility.UtilityDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,5 +86,17 @@ public class AdminController {
         }
 
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/login")
+    public ResponseEntity<AdminDtoLogin> loginAdmin(@RequestBody AdminDtoInsert adminDtoInsert) {
+        Admin admin = UtilityDto.convertTo(adminDtoInsert, Admin.class);
+        try {
+            admin = adminBusiness.loginAdmin(admin);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
+        }
+        AdminDtoLogin adminDtoLogin = UtilityDto.convertTo(admin, AdminDtoLogin.class);
+        return new ResponseEntity<>(adminDtoLogin, HttpStatus.OK);
     }
 }

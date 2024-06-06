@@ -3,6 +3,8 @@ package com.finanzas.breadcredit.repository;
 import com.finanzas.breadcredit.entity.Admin;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface AdminRepository extends JpaRepository<Admin, Integer> {
+import java.util.Optional;
 
+public interface AdminRepository extends JpaRepository<Admin, Integer> {
+    Optional<Admin> findByUserDni(String userDni);
 }

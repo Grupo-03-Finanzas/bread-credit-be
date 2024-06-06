@@ -3,6 +3,7 @@ package com.finanzas.breadcredit.controller;
 import com.finanzas.breadcredit.business.CustomerBusiness;
 import com.finanzas.breadcredit.dto.customer.CustomerDtoData;
 import com.finanzas.breadcredit.dto.customer.CustomerDtoInsert;
+import com.finanzas.breadcredit.dto.customer.CustomerDtoLogin;
 import com.finanzas.breadcredit.entity.Customer;
 import com.finanzas.breadcredit.utility.UtilityDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,5 +86,17 @@ public class CustomerController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/login")
+    public ResponseEntity<CustomerDtoLogin> loginCustomer(@RequestBody CustomerDtoInsert customerDtoInsert) {
+        Customer customer = UtilityDto.convertTo(customerDtoInsert, Customer.class);
+        try {
+            customer = customerBusiness.loginCustomer(customer);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
+        }
+        CustomerDtoLogin customerDtoLogin = UtilityDto.convertTo(customer,CustomerDtoLogin.class);
+        return new ResponseEntity<>(customerDtoLogin, HttpStatus.OK);
     }
 }
