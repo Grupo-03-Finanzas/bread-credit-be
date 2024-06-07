@@ -21,6 +21,7 @@ public class CreditaccountBusiness {
     private AdminRepository adminRepository;
 
     public Creditaccount insertCreditaccount(Creditaccount creditaccount) throws Exception{
+        creditaccount.setId(null);
         if(!adminRepository.existsById(creditaccount.getAdmin().getId())) {
             throw new Exception("Admin not found");
         }

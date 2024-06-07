@@ -16,6 +16,7 @@ public class PaymentBusiness {
     private PaymentRepository paymentRepository;
 
     public Payment insertPayment(Payment payment) throws Exception {
+        payment.setId(null);
         payment.setTime(Instant.now());
         return paymentRepository.save(payment);
     }

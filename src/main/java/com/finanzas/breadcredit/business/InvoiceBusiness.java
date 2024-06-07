@@ -20,6 +20,7 @@ public class InvoiceBusiness {
     private PaymentRepository paymentRepository;
 
     public Invoice insertInvoice(Invoice invoice) throws Exception {
+        invoice.setId(null);
         invoice.setPayment(null);
         return invoiceRepository.save(invoice);
     }

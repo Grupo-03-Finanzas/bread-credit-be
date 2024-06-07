@@ -20,6 +20,9 @@ public class AdminBusiness {
 
 
     public Admin insertAdmin(Admin admin) throws Exception {
+        admin.setId(null);
+        admin.getUser().setId(null);
+
         if(userRepository.existsByEmail(admin.getUser().getEmail())) {
             throw new Exception("Email Already Exists");
         }

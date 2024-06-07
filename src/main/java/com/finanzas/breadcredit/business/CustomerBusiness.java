@@ -19,6 +19,9 @@ public class CustomerBusiness {
     private UserRepository userRepository;
 
     public Customer insertCustomer(Customer customer) throws Exception {
+        customer.setId(null);
+        customer.getUser().setId(null);
+
         if(userRepository.existsByEmail(customer.getUser().getEmail())) {
             throw new Exception("Email Already Exists");
         }

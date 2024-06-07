@@ -24,6 +24,7 @@ public class InstallmentBusiness {
     private PaymentRepository paymentRepository;
 
     public Installment insertInstallment(Installment installment) throws Exception {
+        installment.setId(null);
         if (!purchaseRepository.existsById(installment.getPurchase().getId())) {
             throw new Exception("Purchase not found");
         }

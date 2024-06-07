@@ -19,6 +19,7 @@ public class ProductBusiness {
     private AdminRepository adminRepository;
 
     public Product insertProduct(Product product) throws Exception {
+        product.setId(null);
         if (!adminRepository.existsById(product.getAdmin().getId())) {
             throw new Exception("Admin not found");
         }
