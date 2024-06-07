@@ -123,15 +123,12 @@
 		},
 		{
 			"name": "loginCustomer",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
 			"request": {
-				"method": "GET",
+				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"user\": {\r\n        \"dni\": \"87447645\",\r\n        \"phone\": \"909909909\",\r\n        \"password\": \"Passwordssjj2\"\r\n    }\r\n}",
+					"raw": "{\r\n    \"dni\": \"87447645\",\r\n    \"password\": \"Passwordssjj2\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
