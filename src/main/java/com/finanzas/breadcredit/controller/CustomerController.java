@@ -3,7 +3,6 @@ package com.finanzas.breadcredit.controller;
 import com.finanzas.breadcredit.business.CustomerBusiness;
 import com.finanzas.breadcredit.dto.customer.CustomerDtoData;
 import com.finanzas.breadcredit.dto.customer.CustomerDtoInsert;
-import com.finanzas.breadcredit.dto.customer.CustomerDtoLogin;
 import com.finanzas.breadcredit.dto.user.UserDtoLogin;
 import com.finanzas.breadcredit.entity.Customer;
 import com.finanzas.breadcredit.utility.UtilityDto;
