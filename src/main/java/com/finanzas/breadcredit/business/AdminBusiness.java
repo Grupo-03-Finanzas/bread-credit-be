@@ -78,9 +78,9 @@ public class AdminBusiness {
         userRepository.delete(admin.getUser());
     }
 
-    public Admin loginAdmin(Admin admin) throws Exception {
-        Admin adminExists = adminRepository.findByUserDni(admin.getUser().getDni()).orElseThrow(() -> new Exception("Admin not found"));
-        if (!adminExists.getUser().getPassword().equals(admin.getUser().getPassword())) {
+    public Admin loginAdmin(String dni, String password) throws Exception {
+        Admin adminExists = adminRepository.findByUserDni(dni).orElseThrow(() -> new Exception("Admin not found"));
+        if (!adminExists.getUser().getPassword().equals(password)) {
             throw new Exception("Wrong password");
         }
         return adminExists;

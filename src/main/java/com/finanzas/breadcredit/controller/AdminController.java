@@ -3,7 +3,7 @@ package com.finanzas.breadcredit.controller;
 import com.finanzas.breadcredit.business.AdminBusiness;
 import com.finanzas.breadcredit.dto.admin.AdminDtoData;
 import com.finanzas.breadcredit.dto.admin.AdminDtoInsert;
-import com.finanzas.breadcredit.dto.admin.AdminDtoLogin;
+import com.finanzas.breadcredit.dto.user.UserDtoLogin;
 import com.finanzas.breadcredit.entity.Admin;
 import com.finanzas.breadcredit.utility.UtilityDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,15 +88,15 @@ public class AdminController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("/login")
-    public ResponseEntity<AdminDtoLogin> loginAdmin(@RequestBody AdminDtoInsert adminDtoInsert) {
-        Admin admin = UtilityDto.convertTo(adminDtoInsert, Admin.class);
+    @PostMapping("/login")
+    public ResponseEntity<AdminDtoData> loginAdmin(@RequestBody UserDtoLogin userDtoLogin) {
+        Admin admin;
         try {
-            admin = adminBusiness.loginAdmin(admin);
+            admin = adminBusiness.loginAdmin(userDtoLogin.getDni(),userDtoLogin.getPassword());
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
         }
-        AdminDtoLogin adminDtoLogin = UtilityDto.convertTo(admin, AdminDtoLogin.class);
-        return new ResponseEntity<>(adminDtoLogin, HttpStatus.OK);
+        AdminDtoData adminDtoData = UtilityDto.convertTo(admin, AdminDtoData.class);
+        return new ResponseEntity<>(adminDtoData, HttpStatus.OK);
     }
 }

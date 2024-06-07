@@ -13,10 +13,6 @@ import java.io.Serializable;
 @AllArgsConstructor
 @ToString
 public class UserDtoLogin implements Serializable {
-    Integer id;
-    String firstName;
-    String lastName;
     String dni;
-    String phone;
-    String email;
+    String password;
 }

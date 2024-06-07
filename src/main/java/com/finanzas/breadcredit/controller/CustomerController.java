@@ -4,6 +4,7 @@ import com.finanzas.breadcredit.business.CustomerBusiness;
 import com.finanzas.breadcredit.dto.customer.CustomerDtoData;
 import com.finanzas.breadcredit.dto.customer.CustomerDtoInsert;
 import com.finanzas.breadcredit.dto.customer.CustomerDtoLogin;
+import com.finanzas.breadcredit.dto.user.UserDtoLogin;
 import com.finanzas.breadcredit.entity.Customer;
 import com.finanzas.breadcredit.utility.UtilityDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,15 +89,15 @@ public class CustomerController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("/login")
-    public ResponseEntity<CustomerDtoLogin> loginCustomer(@RequestBody CustomerDtoInsert customerDtoInsert) {
-        Customer customer = UtilityDto.convertTo(customerDtoInsert, Customer.class);
+    @PostMapping("/login")
+    public ResponseEntity<CustomerDtoData> loginCustomer(@RequestBody UserDtoLogin userDtoLogin) {
+        Customer customer;
         try {
-            customer = customerBusiness.loginCustomer(customer);
+            customer = customerBusiness.loginCustomer(userDtoLogin.getDni(),userDtoLogin.getPassword());
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
         }
-        CustomerDtoLogin customerDtoLogin = UtilityDto.convertTo(customer,CustomerDtoLogin.class);
-        return new ResponseEntity<>(customerDtoLogin, HttpStatus.OK);
+        CustomerDtoData customerDtoData = UtilityDto.convertTo(customer,CustomerDtoData.class);
+        return new ResponseEntity<>(customerDtoData, HttpStatus.OK);
     }
 }

@@ -19,5 +19,4 @@ public class UserDtoData implements Serializable {
     String dni;
     String phone;
     String email;
-    String password;
 }

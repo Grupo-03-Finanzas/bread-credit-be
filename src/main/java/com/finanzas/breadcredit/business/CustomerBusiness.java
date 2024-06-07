@@ -77,9 +77,9 @@ public class CustomerBusiness {
         userRepository.delete(customerCurrent.getUser());
     }
 
-    public Customer loginCustomer(Customer customer) throws Exception {
-        Customer customerExists = customerRepository.findByUserDni(customer.getUser().getDni()).orElseThrow(() -> new Exception("Customer not found"));
-        if (!customerExists.getUser().getPassword().equals(customer.getUser().getPassword())) {
+    public Customer loginCustomer(String dni, String password) throws Exception {
+        Customer customerExists = customerRepository.findByUserDni(dni).orElseThrow(() -> new Exception("Customer not found"));
+        if (!customerExists.getUser().getPassword().equals(password)) {
             throw new Exception("Wrong password");
         }
         return customerExists;
