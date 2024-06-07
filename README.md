@@ -1,8 +1,7 @@
 # Backend de la aplicación web BreadCredit
 ## Configuración para el desarrollo
-- Usar `docker-compose build` para compilar.
-- Usar `docker-compose up` para correr el proyecto y `Ctrl + c` para detener.
-- Opcional para correr en segundo plano, usar `docker-compose up -d` para correr el proyecto y `docker-compose down` para detenerlo. 
+- Usar `docker-compose up --build` para correr el proyecto y `Ctrl + c` para detener
+- Usar `docker image prune` para eliminar todas las imágenes de Docker que no tienen etiquetas asignadas (usar con precaución)
 
 ## Pruebas del API
 - Importar colecciones de postman en `.\postman\`
