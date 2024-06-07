@@ -35,6 +35,9 @@ public class Creditaccount {
     @Column(name = "current_credit", nullable = false, precision = 16, scale = 12)
     private BigDecimal currentCredit;
 
+    @Column(name = "billing_day", nullable = false)
+    private Integer billingDay;
+
     @Column(name = "credit_type_of_rate", nullable = false, length = 3)
     private String creditTypeOfRate;
 

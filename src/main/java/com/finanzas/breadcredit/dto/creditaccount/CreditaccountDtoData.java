@@ -22,6 +22,7 @@ public class CreditaccountDtoData implements Serializable {
     Boolean active;
     BigDecimal maxCredit;
     BigDecimal currentCredit;
+    Integer billingDay;
     String creditTypeOfRate;
     BigDecimal creditRate;
     Integer creditCompounding;
