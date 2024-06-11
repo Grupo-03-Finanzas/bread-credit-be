@@ -41,9 +41,6 @@ public class CreditaccountBusiness {
 
     public List<Creditaccount> listCreditaccounts() throws Exception{
         List<Creditaccount> creditaccountList = creditaccountRepository.findAll();
-        //if (creditaccountList.isEmpty()) {
-        //    throw new Exception("No creditaccounts found");
-        //}
         return creditaccountList;
     }
 
@@ -83,5 +80,9 @@ public class CreditaccountBusiness {
 
     public Creditaccount getCreditaccountByAdminIdANDCustomerId(Integer adminId, Integer customerId) throws Exception{
         return creditaccountRepository.findByAdmin_IdAndCustomer_Id(adminId, customerId).orElseThrow();
+    }
+
+    public Creditaccount getCreditaccountByCustomerId(Integer customerId) throws Exception{
+        return creditaccountRepository.findByCustomer_Id(customerId).orElseThrow();
     }
 }
