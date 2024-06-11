@@ -1,8 +1,10 @@
 package com.finanzas.breadcredit.controller;
 
 import com.finanzas.breadcredit.business.ProductBusiness;
+import com.finanzas.breadcredit.dto.creditaccount.CreditaccountDtoData;
 import com.finanzas.breadcredit.dto.product.ProductDtoData;
 import com.finanzas.breadcredit.dto.product.ProductDtoInsert;
+import com.finanzas.breadcredit.entity.Creditaccount;
 import com.finanzas.breadcredit.entity.Product;
 import com.finanzas.breadcredit.utility.UtilityDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,5 +87,17 @@ public class ProductController {
         }
 
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/admin/{id}")
+    public ResponseEntity<List<ProductDtoData>> getProductsByAdminId(@PathVariable Integer id) {
+        List<Product> listProducts;
+        try {
+            listProducts = productBusiness.getProductByAdminId(id);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
+        List<ProductDtoData> productDtoDataList = UtilityDto.convertToList(listProducts, ProductDtoData.class);
+        return new ResponseEntity<>(productDtoDataList, HttpStatus.OK);
     }
 }

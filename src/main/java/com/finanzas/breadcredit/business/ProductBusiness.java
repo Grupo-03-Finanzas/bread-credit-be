@@ -1,5 +1,6 @@
 package com.finanzas.breadcredit.business;
 
+import com.finanzas.breadcredit.entity.Creditaccount;
 import com.finanzas.breadcredit.entity.Product;
 import com.finanzas.breadcredit.repository.ProductRepository;
 import com.finanzas.breadcredit.repository.AdminRepository;
@@ -32,11 +33,6 @@ public class ProductBusiness {
 
     public List<Product> listProducts() throws Exception {
         List<Product> productList = productRepository.findAll();
-
-        //if(productList.isEmpty()) {
-        //    throw new Exception("No products found");
-        //}
-
         return productList;
     }
 
@@ -55,5 +51,10 @@ public class ProductBusiness {
     public void deleteProduct(Integer id) throws Exception {
         Product product = productRepository.findById(id).orElseThrow(() -> new Exception("Product not found"));
         productRepository.delete(product);
+    }
+
+    public List<Product> getProductByAdminId(Integer id) throws Exception{
+        List<Product> productList = productRepository.findByAdmin_Id(id).orElseThrow();
+        return productList;
     }
 }
