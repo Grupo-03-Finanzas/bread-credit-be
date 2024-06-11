@@ -99,4 +99,16 @@ public class CustomerController {
         CustomerDtoData customerDtoData = UtilityDto.convertTo(customer,CustomerDtoData.class);
         return new ResponseEntity<>(customerDtoData, HttpStatus.OK);
     }
+    @GetMapping("/dni/{dni}")
+    public ResponseEntity<CustomerDtoData> getCustomerById(@PathVariable String dni) {
+        Customer customer;
+        try {
+            customer = customerBusiness.getCustomerByDni(dni);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage(), e);
+        }
+        CustomerDtoData customerDtoData = UtilityDto.convertTo(customer, CustomerDtoData.class);
+        return new ResponseEntity<>(customerDtoData, HttpStatus.OK);
+    }
+
 }

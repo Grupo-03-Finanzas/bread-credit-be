@@ -78,10 +78,14 @@ public class CustomerBusiness {
     }
 
     public Customer loginCustomer(String dni, String password) throws Exception {
-        Customer customerExists = customerRepository.findByUserDni(dni).orElseThrow(() -> new Exception("Customer not found"));
+        Customer customerExists = customerRepository.findByUser_Dni(dni).orElseThrow(() -> new Exception("Customer not found"));
         if (!customerExists.getUser().getPassword().equals(password)) {
             throw new Exception("Wrong password");
         }
         return customerExists;
+    }
+
+    public Customer getCustomerByDni(String dni) throws Exception{
+        return customerRepository.findByUser_Dni(dni).orElseThrow(() -> new Exception("Customer not found"));
     }
 }
