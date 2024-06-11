@@ -23,13 +23,11 @@ public class CreditaccountController {
     @PostMapping("")
     public ResponseEntity<CreditaccountDtoData> insertCreditaccount(@RequestBody CreditaccountDtoInsert creditaccountDtoInsert) {
         Creditaccount creditaccount = UtilityDto.convertTo(creditaccountDtoInsert, Creditaccount.class);
-
         try {
             creditaccount = creditaccountBusiness.insertCreditaccount(creditaccount);
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT,e.getMessage());
+            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
         }
-
         CreditaccountDtoData creditaccountDtoData = UtilityDto.convertTo(creditaccount, CreditaccountDtoData.class);
         return new ResponseEntity<>(creditaccountDtoData, HttpStatus.CREATED);
     }
@@ -37,13 +35,11 @@ public class CreditaccountController {
     @GetMapping("/{id}")
     public ResponseEntity<CreditaccountDtoData> getCreditaccountById(@PathVariable Integer id) {
         Creditaccount creditaccount;
-
         try {
             creditaccount = creditaccountBusiness.getCreditaccountById(id);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
-
         CreditaccountDtoData creditaccountDtoData = UtilityDto.convertTo(creditaccount, CreditaccountDtoData.class);
         return new ResponseEntity<>(creditaccountDtoData, HttpStatus.OK);
     }
@@ -51,13 +47,11 @@ public class CreditaccountController {
     @GetMapping("")
     public ResponseEntity<List<CreditaccountDtoData>> listCreditaccounts() {
         List<Creditaccount> listCreditaccounts;
-
         try {
-             listCreditaccounts = creditaccountBusiness.listCreditaccounts();
+            listCreditaccounts = creditaccountBusiness.listCreditaccounts();
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
-
         List<CreditaccountDtoData> creditaccountDtoDataList = UtilityDto.convertToList(listCreditaccounts, CreditaccountDtoData.class);
         return new ResponseEntity<>(creditaccountDtoDataList, HttpStatus.OK);
     }
@@ -65,13 +59,11 @@ public class CreditaccountController {
     @PutMapping("/{id}")
     public ResponseEntity<CreditaccountDtoData> updateCreditaccount(@PathVariable Integer id, @RequestBody CreditaccountDtoInsert creditaccountDtoInsert) {
         Creditaccount creditaccount = UtilityDto.convertTo(creditaccountDtoInsert, Creditaccount.class);
-
         try {
             creditaccount = creditaccountBusiness.updateCreditaccount(id, creditaccount);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
-
         CreditaccountDtoData creditaccountDtoData = UtilityDto.convertTo(creditaccount, CreditaccountDtoData.class);
         return new ResponseEntity<>(creditaccountDtoData, HttpStatus.OK);
     }
@@ -84,5 +76,17 @@ public class CreditaccountController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/admin/{id}")
+    public ResponseEntity<List<CreditaccountDtoData>> getCreditaccountByAdminId(@PathVariable Integer id) {
+        List<Creditaccount> listCreditaccounts;
+        try {
+            listCreditaccounts = creditaccountBusiness.getCreditAccountByAdminId(id);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
+        List<CreditaccountDtoData> creditaccountDtoDataList = UtilityDto.convertToList(listCreditaccounts, CreditaccountDtoData.class);
+        return new ResponseEntity<>(creditaccountDtoDataList, HttpStatus.OK);
     }
 }

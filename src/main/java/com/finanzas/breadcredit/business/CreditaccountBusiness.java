@@ -75,4 +75,9 @@ public class CreditaccountBusiness {
         Creditaccount creditaccount = creditaccountRepository.findById(id).orElseThrow(() -> new Exception("Creditaccount not found"));
         creditaccountRepository.delete(creditaccount);
     }
+
+    public List<Creditaccount> getCreditAccountByAdminId(Integer id) throws Exception{
+        List<Creditaccount> creditaccountList = creditaccountRepository.findByAdmin_Id(id).orElseThrow();
+        return creditaccountList;
+    }
 }

@@ -1,8 +1,13 @@
 package com.finanzas.breadcredit.repository;
 
+import com.finanzas.breadcredit.entity.Admin;
 import com.finanzas.breadcredit.entity.Creditaccount;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
+import java.util.Optional;
+
 public interface CreditaccountRepository extends JpaRepository<Creditaccount, Integer> {
     Boolean existsByCustomerIdAndAdminId(Integer customerId, Integer adminId);
+    Optional<List<Creditaccount>> findByAdmin_Id(Integer adminId);
 }
