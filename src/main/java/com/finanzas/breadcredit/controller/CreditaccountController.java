@@ -79,7 +79,7 @@ public class CreditaccountController {
     }
 
     @GetMapping("/admin/{id}")
-    public ResponseEntity<List<CreditaccountDtoData>> getCreditaccountByAdminId(@PathVariable Integer id) {
+    public ResponseEntity<List<CreditaccountDtoData>> getCreditaccountsByAdminId(@PathVariable Integer id) {
         List<Creditaccount> listCreditaccounts;
         try {
             listCreditaccounts = creditaccountBusiness.getCreditAccountByAdminId(id);
@@ -88,5 +88,17 @@ public class CreditaccountController {
         }
         List<CreditaccountDtoData> creditaccountDtoDataList = UtilityDto.convertToList(listCreditaccounts, CreditaccountDtoData.class);
         return new ResponseEntity<>(creditaccountDtoDataList, HttpStatus.OK);
+    }
+
+    @GetMapping("/admin/{adminId}/customer/{customerId}")
+    public ResponseEntity<CreditaccountDtoData> getCreditaccountById(@PathVariable Integer adminId, @PathVariable Integer customerId) {
+        Creditaccount creditaccount;
+        try {
+            creditaccount = creditaccountBusiness.getCreditaccountByAdminIdANDCustomerId(adminId, customerId);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
+        CreditaccountDtoData creditaccountDtoData = UtilityDto.convertTo(creditaccount, CreditaccountDtoData.class);
+        return new ResponseEntity<>(creditaccountDtoData, HttpStatus.OK);
     }
 }

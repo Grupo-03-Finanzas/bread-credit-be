@@ -35,7 +35,7 @@ public class CreditaccountBusiness {
         return creditaccountRepository.save(creditaccount);
     }
 
-    public Creditaccount getCreditaccountById(int id) throws Exception{
+    public Creditaccount getCreditaccountById(Integer id) throws Exception{
         return creditaccountRepository.findById(id).orElseThrow(() -> new Exception("CreditAccount not found"));
     }
 
@@ -79,5 +79,9 @@ public class CreditaccountBusiness {
     public List<Creditaccount> getCreditAccountByAdminId(Integer id) throws Exception{
         List<Creditaccount> creditaccountList = creditaccountRepository.findByAdmin_Id(id).orElseThrow();
         return creditaccountList;
+    }
+
+    public Creditaccount getCreditaccountByAdminIdANDCustomerId(Integer adminId, Integer customerId) throws Exception{
+        return creditaccountRepository.findByAdmin_IdAndCustomer_Id(adminId, customerId).orElseThrow();
     }
 }
