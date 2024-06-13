@@ -85,4 +85,9 @@ public class CreditaccountBusiness {
     public Creditaccount getCreditaccountByCustomerId(Integer customerId) throws Exception{
         return creditaccountRepository.findByCustomer_Id(customerId).orElseThrow();
     }
+
+    public Creditaccount getCreditaccountByCustomerDni(String dni) throws Exception{
+        return creditaccountRepository.findByCustomer_User_Dni(dni).orElseThrow();
+    }
+
 }
