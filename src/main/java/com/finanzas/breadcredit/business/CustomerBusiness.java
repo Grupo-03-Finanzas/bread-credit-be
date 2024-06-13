@@ -1,6 +1,10 @@
 package com.finanzas.breadcredit.business;
 
 import com.finanzas.breadcredit.entity.Customer;
+import com.finanzas.breadcredit.exception.LoginException;
+import com.finanzas.breadcredit.exception.ResourceConflictException;
+import com.finanzas.breadcredit.exception.ResourceNotFoundException;
+import com.finanzas.breadcredit.exception.UnexpectedException;
 import com.finanzas.breadcredit.repository.CustomerRepository;
 import com.finanzas.breadcredit.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,80 +16,119 @@ import java.util.List;
 @Service
 public class CustomerBusiness {
 
-    @Autowired
-    private CustomerRepository customerRepository;
+
+    private final CustomerRepository customerRepository;
+    private final UserRepository userRepository;
 
     @Autowired
-    private UserRepository userRepository;
-
-    public Customer insertCustomer(Customer customer) throws Exception {
-        customer.setId(null);
-        customer.getUser().setId(null);
-
-        if(userRepository.existsByEmail(customer.getUser().getEmail())) {
-            throw new Exception("Email Already Exists");
-        }
-        if(userRepository.existsByDni(customer.getUser().getDni())) {
-            throw new Exception("Dni Already Exists");
-        }
-
-        return customerRepository.save(customer);
+    public CustomerBusiness(CustomerRepository customerRepository, UserRepository userRepository) {
+        this.customerRepository = customerRepository;
+        this.userRepository = userRepository;
     }
 
-    public Customer getCustomerById(Integer id) throws Exception{
-        return customerRepository.findById(id).orElseThrow(() -> new Exception("Customer not found"));
+    public Customer getCustomerById(Integer id) throws ResourceNotFoundException, UnexpectedException {
+        Customer customer;
+        try {
+            customer = customerRepository.findById(id).orElse(null);
+        } catch (Exception e) {
+            throw new UnexpectedException(e.getMessage());
+        }
+        if (customer == null) {
+            throw new ResourceNotFoundException("Customer { id=" + id + " } not found");
+        }
+        return customer;
     }
 
-    public List<Customer> listCustomers() throws Exception {
-        List<Customer> customerList = customerRepository.findAll();
-
-        //if (customerList.isEmpty()) {
-        //    throw new Exception("Customers not found");
-        //}
-
+    public List<Customer> listCustomers() throws ResourceNotFoundException, UnexpectedException {
+        List<Customer> customerList;
+        try {
+            customerList = customerRepository.findAll();
+        } catch (Exception e) {
+            throw new UnexpectedException(e.getMessage());
+        }
+        if (customerList.isEmpty()) {
+            throw new ResourceNotFoundException("Customer list is empty");
+        }
         return customerList;
     }
 
     @Transactional
-    public Customer updateCustomer(Integer id, Customer customer) throws Exception {
-        customer.setId(id);
-        customer.getUser().setId(id);
-
-        if (!customerRepository.existsById(customer.getId())) {
-            throw new Exception("Customer not found");
+    public Customer insertCustomer(Customer customer) throws ResourceConflictException, UnexpectedException {
+        customer.setId(null);
+        customer.getUser().setId(null);
+        if (userRepository.existsByEmail(customer.getUser().getEmail())) {
+            throw new ResourceConflictException("User with  { email='" + customer.getUser().getEmail() + "' } already exists");
         }
-        Customer customerExists = customerRepository.findById(customer.getId()).orElse(new Customer());
-        if (!customerExists.getUser().getEmail().equals(customer.getUser().getEmail())) {
-            if(userRepository.existsByEmail(customer.getUser().getEmail())) {
-                throw new Exception("Email Already Exists");
-            }
+        if (userRepository.existsByDni(customer.getUser().getDni())) {
+            throw new ResourceConflictException("User with  { dni='" + customer.getUser().getDni() + "' } already exists");
         }
-        if (!customerExists.getUser().getDni().equals(customer.getUser().getDni())) {
-            if(userRepository.existsByDni(customer.getUser().getDni())) {
-                throw new Exception("Dni Already Exists");
-            }
+        try {
+            return customerRepository.save(customer);
+        } catch (Exception e) {
+            throw new UnexpectedException(e.getMessage());
         }
-
-        userRepository.save(customer.getUser());
-        return customerRepository.save(customer);
     }
 
     @Transactional
-    public void deleteCustomer(Integer id) throws Exception {
-        Customer customerCurrent = customerRepository.findById(id).orElseThrow(() -> new Exception("Customer not found"));
-        customerRepository.delete(customerCurrent);
-        userRepository.delete(customerCurrent.getUser());
-    }
-
-    public Customer loginCustomer(String dni, String password) throws Exception {
-        Customer customerExists = customerRepository.findByUser_Dni(dni).orElseThrow(() -> new Exception("Customer not found"));
-        if (!customerExists.getUser().getPassword().equals(password)) {
-            throw new Exception("Wrong password");
+    public Customer updateCustomer(Integer id, Customer customer) throws ResourceNotFoundException, ResourceConflictException, UnexpectedException {
+        customer.setId(id);
+        customer.getUser().setId(id);
+        Customer customerOld = getCustomerById(id);
+        if (!customerOld.getUser().getEmail().equals(customer.getUser().getEmail())) {
+            if (userRepository.existsByEmail(customer.getUser().getEmail())) {
+                throw new ResourceConflictException("User with  { email='" + customer.getUser().getEmail() + "' } already exists");
+            }
         }
-        return customerExists;
+        if (!customerOld.getUser().getDni().equals(customer.getUser().getDni())) {
+            if (userRepository.existsByDni(customer.getUser().getDni())) {
+                throw new ResourceConflictException("User with  { dni='" + customer.getUser().getDni() + "' } already exists");
+            }
+        }
+        try {
+            userRepository.save(customer.getUser()); //lookup for CascadeType
+            return customerRepository.save(customer);
+        } catch (Exception e) {
+            throw new UnexpectedException(e.getMessage());
+        }
     }
 
-    public Customer getCustomerByDni(String dni) throws Exception{
-        return customerRepository.findByUser_Dni(dni).orElseThrow(() -> new Exception("Customer not found"));
+    @Transactional
+    public void deleteCustomer(Integer id) throws ResourceNotFoundException, UnexpectedException {
+        Customer customer = getCustomerById(id);
+        try {
+            customerRepository.delete(customer);
+            userRepository.delete(customer.getUser());
+        } catch (Exception e) {
+            throw new UnexpectedException(e.getMessage());
+        }
+    }
+
+    public Customer loginCustomer(String dni, String password) throws LoginException, UnexpectedException {
+        Customer customer;
+        try {
+            customer = customerRepository.findByUser_Dni(dni).orElse(null);
+        } catch (Exception e) {
+            throw new UnexpectedException(e.getMessage());
+        }
+        if (customer == null) {
+            throw new LoginException("Invalid email or password");
+        }
+        if (!customer.getUser().getPassword().equals(password)) {
+            throw new LoginException("Invalid email or password");
+        }
+        return customer;
+    }
+
+    public Customer getCustomerByDni(String dni) throws ResourceNotFoundException, UnexpectedException{
+        Customer customer;
+        try {
+            customer = customerRepository.findByUser_Dni(dni).orElse(null);
+        } catch (Exception e) {
+            throw new UnexpectedException(e.getMessage());
+        }
+        if (customer == null) {
+            throw new ResourceNotFoundException("Customer { dni=" + dni + " } not found");
+        }
+        return customer;
     }
 }

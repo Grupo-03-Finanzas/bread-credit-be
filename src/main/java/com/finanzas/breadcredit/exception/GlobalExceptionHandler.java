@@ -27,7 +27,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(UnexpectedException.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseStatus(HttpStatus.OK)
     ControllerError unexpectedException(UnexpectedException ex) {
         return new ControllerError(HttpStatus.INTERNAL_SERVER_ERROR, ex);
     }

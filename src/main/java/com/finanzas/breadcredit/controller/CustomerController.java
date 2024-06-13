@@ -5,12 +5,14 @@ import com.finanzas.breadcredit.dto.customer.CustomerDtoData;
 import com.finanzas.breadcredit.dto.customer.CustomerDtoInsert;
 import com.finanzas.breadcredit.dto.user.UserDtoLogin;
 import com.finanzas.breadcredit.entity.Customer;
+import com.finanzas.breadcredit.exception.LoginException;
+import com.finanzas.breadcredit.exception.ResourceConflictException;
+import com.finanzas.breadcredit.exception.ResourceNotFoundException;
+import com.finanzas.breadcredit.exception.UnexpectedException;
 import com.finanzas.breadcredit.utility.UtilityDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -18,97 +20,62 @@ import java.util.List;
 @RequestMapping("/customer")
 public class CustomerController {
 
+
+    private final CustomerBusiness customerBusiness;
+
     @Autowired
-    private CustomerBusiness customerBusiness;
-
-    @PostMapping("")
-    public ResponseEntity<CustomerDtoData> insertCustomer(@RequestBody CustomerDtoInsert customerDtoInsert) {
-        Customer customer = UtilityDto.convertTo(customerDtoInsert, Customer.class);
-
-        try {
-            customer = customerBusiness.insertCustomer(customer);
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT,e.getMessage(), e);
-        }
-
-        CustomerDtoData customerDtoData = UtilityDto.convertTo(customer, CustomerDtoData.class);
-        return new ResponseEntity<>(customerDtoData, HttpStatus.CREATED);
+    public CustomerController(CustomerBusiness customerBusiness) {
+        this.customerBusiness = customerBusiness;
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CustomerDtoData> getCustomerById(@PathVariable Integer id) {
-        Customer customer;
-
-        try {
-            customer = customerBusiness.getCustomerById(id);
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage(), e);
-        }
-
-        CustomerDtoData customerDtoData = UtilityDto.convertTo(customer, CustomerDtoData.class);
-        return new ResponseEntity<>(customerDtoData, HttpStatus.OK);
+    @ResponseStatus(HttpStatus.OK)
+    public CustomerDtoData getCustomerById(@PathVariable Integer id) throws ResourceNotFoundException, UnexpectedException {
+        Customer customer = customerBusiness.getCustomerById(id);
+        return UtilityDto.convertTo(customer, CustomerDtoData.class);
     }
 
     @GetMapping("")
-    public ResponseEntity<List<CustomerDtoData>> getCustomers() {
-        List<Customer> listCustomers;
+    @ResponseStatus(HttpStatus.OK)
+    public List<CustomerDtoData> getCustomers() throws ResourceNotFoundException, UnexpectedException {
+        List<Customer> listCustomers = customerBusiness.listCustomers();
+        return UtilityDto.convertToList(listCustomers, CustomerDtoData.class);
+    }
 
-        try {
-            listCustomers = customerBusiness.listCustomers();
-
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        }
-
-        List<CustomerDtoData> customerDtoDataList = UtilityDto.convertToList(listCustomers, CustomerDtoData.class);
-        return new ResponseEntity<>(customerDtoDataList, HttpStatus.OK);
+    @PostMapping("")
+    @ResponseStatus(HttpStatus.CREATED)
+    public CustomerDtoData insertCustomer(@RequestBody CustomerDtoInsert customerDtoInsert) throws ResourceConflictException, UnexpectedException {
+        Customer customer = UtilityDto.convertTo(customerDtoInsert, Customer.class);
+        customer = customerBusiness.insertCustomer(customer);
+        return UtilityDto.convertTo(customer, CustomerDtoData.class);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CustomerDtoData> updateCustomer(@PathVariable Integer id ,@RequestBody CustomerDtoInsert customerDtoInsert) {
+    @ResponseStatus(HttpStatus.OK)
+    public CustomerDtoData updateCustomer(@PathVariable Integer id, @RequestBody CustomerDtoInsert customerDtoInsert) throws ResourceNotFoundException, ResourceConflictException, UnexpectedException {
         Customer customer = UtilityDto.convertTo(customerDtoInsert, Customer.class);
-
-        try {
-            customer = customerBusiness.updateCustomer(id, customer);
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        }
-
-        CustomerDtoData customerDtoData = UtilityDto.convertTo(customer, CustomerDtoData.class);
-        return new ResponseEntity<>(customerDtoData, HttpStatus.OK);
+        customer = customerBusiness.updateCustomer(id, customer);
+        return UtilityDto.convertTo(customer, CustomerDtoData.class);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Integer id) {
-        try {
-            customerBusiness.deleteCustomer(id);
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        }
-        return new ResponseEntity<>(HttpStatus.OK);
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public Void delete(@PathVariable Integer id) throws ResourceNotFoundException, UnexpectedException {
+        customerBusiness.deleteCustomer(id);
+        return null;
     }
 
     @PostMapping("/login")
-    public ResponseEntity<CustomerDtoData> loginCustomer(@RequestBody UserDtoLogin userDtoLogin) {
-        Customer customer;
-        try {
-            customer = customerBusiness.loginCustomer(userDtoLogin.getDni(),userDtoLogin.getPassword());
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
-        }
-        CustomerDtoData customerDtoData = UtilityDto.convertTo(customer,CustomerDtoData.class);
-        return new ResponseEntity<>(customerDtoData, HttpStatus.OK);
-    }
-    @GetMapping("/dni/{dni}")
-    public ResponseEntity<CustomerDtoData> getCustomerById(@PathVariable String dni) {
-        Customer customer;
-        try {
-            customer = customerBusiness.getCustomerByDni(dni);
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage(), e);
-        }
-        CustomerDtoData customerDtoData = UtilityDto.convertTo(customer, CustomerDtoData.class);
-        return new ResponseEntity<>(customerDtoData, HttpStatus.OK);
+    @ResponseStatus(HttpStatus.OK)
+    public CustomerDtoData loginCustomer(@RequestBody UserDtoLogin userDtoLogin) throws LoginException, UnexpectedException {
+        Customer customer = customerBusiness.loginCustomer(userDtoLogin.getDni(), userDtoLogin.getPassword());
+        return UtilityDto.convertTo(customer, CustomerDtoData.class);
     }
 
+    @GetMapping("/dni/{dni}")
+    @ResponseStatus(HttpStatus.OK)
+    public CustomerDtoData getCustomerByDni(@PathVariable String dni) throws ResourceNotFoundException, UnexpectedException{
+        Customer customer = customerBusiness.getCustomerByDni(dni);
+        return UtilityDto.convertTo(customer, CustomerDtoData.class);
+    }
 }
