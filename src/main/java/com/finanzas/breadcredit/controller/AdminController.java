@@ -5,12 +5,14 @@ import com.finanzas.breadcredit.dto.admin.AdminDtoData;
 import com.finanzas.breadcredit.dto.admin.AdminDtoInsert;
 import com.finanzas.breadcredit.dto.user.UserDtoLogin;
 import com.finanzas.breadcredit.entity.Admin;
+import com.finanzas.breadcredit.exception.LoginException;
+import com.finanzas.breadcredit.exception.ResourceConflictException;
+import com.finanzas.breadcredit.exception.ResourceNotFoundException;
+import com.finanzas.breadcredit.exception.UnexpectedException;
 import com.finanzas.breadcredit.utility.UtilityDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -18,85 +20,54 @@ import java.util.List;
 @RequestMapping("/admin")
 public class AdminController {
 
+    private final AdminBusiness adminBusiness;
+
     @Autowired
-    private AdminBusiness adminBusiness;
-
-    @PostMapping("")
-    public ResponseEntity<AdminDtoData> insertAdmin(@RequestBody AdminDtoInsert adminDtoInsert) {
-        Admin admin = UtilityDto.convertTo(adminDtoInsert, Admin.class);
-
-        try {
-            admin = adminBusiness.insertAdmin(admin);
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
-        }
-
-        AdminDtoData adminDtoData = UtilityDto.convertTo(admin, AdminDtoData.class);
-        return new ResponseEntity<>(adminDtoData, HttpStatus.CREATED);
+    public AdminController(AdminBusiness adminBusiness) {
+        this.adminBusiness = adminBusiness;
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<AdminDtoData> getAdminById(@PathVariable Integer id) {
-        Admin admin;
-
-        try {
-            admin = adminBusiness.getAdminById(id);
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        }
-
-        AdminDtoData adminDtoData = UtilityDto.convertTo(admin, AdminDtoData.class);
-        return new ResponseEntity<>(adminDtoData, HttpStatus.OK);
+    @ResponseStatus(HttpStatus.OK)
+    public AdminDtoData getAdminById(@PathVariable Integer id) throws ResourceNotFoundException, UnexpectedException {
+        Admin admin = adminBusiness.getAdminById(id);
+        return UtilityDto.convertTo(admin, AdminDtoData.class);
     }
 
     @GetMapping("")
-    public ResponseEntity<List<AdminDtoData>> listAdmins() {
-        List<Admin> listAdmins;
+    @ResponseStatus(HttpStatus.OK)
+    public List<AdminDtoData> listAdmins() throws ResourceNotFoundException, UnexpectedException {
+        List<Admin> listAdmins = adminBusiness.listAdmins();
+        return UtilityDto.convertToList(listAdmins, AdminDtoData.class);
+    }
 
-        try {
-            listAdmins = adminBusiness.listAdmins();
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        }
-
-        List<AdminDtoData> adminDtoDataList = UtilityDto.convertToList(listAdmins, AdminDtoData.class);
-        return new ResponseEntity<>(adminDtoDataList, HttpStatus.OK);
+    @PostMapping("")
+    @ResponseStatus(HttpStatus.CREATED)
+    public AdminDtoData insertAdmin(@RequestBody AdminDtoInsert adminDtoInsert) throws ResourceConflictException, UnexpectedException {
+        Admin admin = UtilityDto.convertTo(adminDtoInsert, Admin.class);
+        admin = adminBusiness.insertAdmin(admin);
+        return UtilityDto.convertTo(admin, AdminDtoData.class);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<AdminDtoData> updateAdmin(@PathVariable Integer id, @RequestBody AdminDtoInsert adminDtoInsert) {
+    @ResponseStatus(HttpStatus.OK)
+    public AdminDtoData updateAdmin(@PathVariable Integer id, @RequestBody AdminDtoInsert adminDtoInsert) throws ResourceNotFoundException, ResourceConflictException, UnexpectedException {
         Admin admin = UtilityDto.convertTo(adminDtoInsert, Admin.class);
-
-        try {
-            admin = adminBusiness.updateAdmin(id, admin);
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,e.getMessage());
-        }
-
-        AdminDtoData adminDtoData = UtilityDto.convertTo(admin, AdminDtoData.class);
-        return new ResponseEntity<>(adminDtoData, HttpStatus.OK);
+        admin = adminBusiness.updateAdmin(id, admin);
+        return UtilityDto.convertTo(admin, AdminDtoData.class);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Integer id) {
-        try {
-            adminBusiness.deleteAdmin(id);
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        }
-
-        return new ResponseEntity<>(HttpStatus.OK);
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public Void deleteAdmin(@PathVariable Integer id) throws ResourceNotFoundException, UnexpectedException {
+        adminBusiness.deleteAdmin(id);
+        return null;
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AdminDtoData> loginAdmin(@RequestBody UserDtoLogin userDtoLogin) {
-        Admin admin;
-        try {
-            admin = adminBusiness.loginAdmin(userDtoLogin.getDni(),userDtoLogin.getPassword());
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
-        }
-        AdminDtoData adminDtoData = UtilityDto.convertTo(admin, AdminDtoData.class);
-        return new ResponseEntity<>(adminDtoData, HttpStatus.OK);
+    @ResponseStatus(HttpStatus.OK)
+    public AdminDtoData loginAdmin(@RequestBody UserDtoLogin userDtoLogin) throws LoginException, UnexpectedException {
+        Admin  admin = adminBusiness.loginAdmin(userDtoLogin.getDni(), userDtoLogin.getPassword());
+        return UtilityDto.convertTo(admin, AdminDtoData.class);
     }
 }

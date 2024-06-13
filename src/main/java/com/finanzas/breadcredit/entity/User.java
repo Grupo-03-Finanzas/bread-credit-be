@@ -22,13 +22,13 @@ public class User {
     @Column(name = "last_name", nullable = false, length = 32)
     private String lastName;
 
-    @Column(name = "dni", nullable = false, length = 8)
+    @Column(name = "dni", nullable = false, length = 8, unique = true)
     private String dni;
 
     @Column(name = "phone", nullable = false, length = 9)
     private String phone;
 
-    @Column(name = "email", nullable = false, length = 32)
+    @Column(name = "email", nullable = false, length = 32, unique = true)
     private String email;
 
     @Column(name = "password", nullable = false, length = 32)
