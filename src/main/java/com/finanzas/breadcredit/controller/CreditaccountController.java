@@ -115,7 +115,7 @@ public class CreditaccountController {
     }
 
     @GetMapping("/customer/dni/{dni}")
-    public ResponseEntity<CreditaccountDtoData> getCreditaccountByCustomerDni(String dni){
+    public ResponseEntity<CreditaccountDtoData> getCreditaccountByCustomerDni(@PathVariable String dni){
         Creditaccount creditaccount;
         try {
             creditaccount = creditaccountBusiness.getCreditaccountByCustomerDni(dni);
