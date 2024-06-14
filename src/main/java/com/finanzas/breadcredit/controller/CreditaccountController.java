@@ -113,4 +113,16 @@ public class CreditaccountController {
         CreditaccountDtoData creditaccountDtoData = UtilityDto.convertTo(creditaccount, CreditaccountDtoData.class);
         return new ResponseEntity<>(creditaccountDtoData, HttpStatus.OK);
     }
+
+    @GetMapping("/customer/dni/{dni}")
+    public ResponseEntity<CreditaccountDtoData> getCreditaccountByCustomerDni(@PathVariable String dni){
+        Creditaccount creditaccount;
+        try {
+            creditaccount = creditaccountBusiness.getCreditaccountByCustomerDni(dni);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
+        CreditaccountDtoData creditaccountDtoData = UtilityDto.convertTo(creditaccount, CreditaccountDtoData.class);
+        return new ResponseEntity<>(creditaccountDtoData, HttpStatus.OK);
+    }
 }

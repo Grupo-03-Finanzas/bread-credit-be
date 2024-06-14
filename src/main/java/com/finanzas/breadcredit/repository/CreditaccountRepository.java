@@ -11,4 +11,5 @@ public interface CreditaccountRepository extends JpaRepository<Creditaccount, In
     Optional<List<Creditaccount>> findByAdmin_Id(Integer adminId);
     Optional<Creditaccount> findByAdmin_IdAndCustomer_Id(Integer adminId, Integer customerId);
     Optional<Creditaccount> findByCustomer_Id(Integer customerId);
+    Optional<Creditaccount> findByCustomer_User_Dni(String dni);
 }
