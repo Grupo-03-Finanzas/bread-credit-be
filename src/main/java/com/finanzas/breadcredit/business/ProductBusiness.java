@@ -1,9 +1,9 @@
 package com.finanzas.breadcredit.business;
 
-import com.finanzas.breadcredit.entity.Creditaccount;
 import com.finanzas.breadcredit.entity.Product;
 import com.finanzas.breadcredit.repository.ProductRepository;
 import com.finanzas.breadcredit.repository.AdminRepository;
+import com.finanzas.breadcredit.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,48 +13,56 @@ import java.util.List;
 @Service
 public class ProductBusiness {
 
-    @Autowired
-    private ProductRepository productRepository;
+    private final ProductRepository productRepository;
+    private final AdminRepository adminRepository;
 
     @Autowired
-    private AdminRepository adminRepository;
+    public ProductBusiness(ProductRepository productRepository, AdminRepository adminRepository) {
+        this.productRepository = productRepository;
+        this.adminRepository = adminRepository;
+    }
 
-    public Product insertProduct(Product product) throws Exception {
+    public Product getProductById(Integer id) throws ResourceNotFoundException {
+        return productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+    }
+
+    public List<Product> listProducts() throws ResourceNotFoundException {
+        List<Product> productList = productRepository.findAll();
+        if (productList.isEmpty()) {
+            throw new ResourceNotFoundException("No products found");
+        }
+        return productList;
+    }
+
+    public Product insertProduct(Product product) throws ResourceNotFoundException {
         product.setId(null);
         if (!adminRepository.existsById(product.getAdmin().getId())) {
-            throw new Exception("Admin not found");
+            throw new ResourceNotFoundException("Admin not found");
         }
         return productRepository.save(product);
     }
 
-    public Product getProductById(Integer id) throws Exception {
-        return productRepository.findById(id).orElseThrow(() -> new Exception("Product not found"));
-    }
-
-    public List<Product> listProducts() throws Exception {
-        List<Product> productList = productRepository.findAll();
-        return productList;
-    }
-
     @Transactional
-    public Product updateProduct(Integer id, Product product) throws Exception {
+    public Product updateProduct(Integer id, Product product) throws ResourceNotFoundException {
         product.setId(id);
 
         if (!productRepository.existsById(id)) {
-            throw new Exception("Product not found");
+            throw new ResourceNotFoundException("Product not found");
         }
 
         return productRepository.save(product);
     }
 
     @Transactional
-    public void deleteProduct(Integer id) throws Exception {
-        Product product = productRepository.findById(id).orElseThrow(() -> new Exception("Product not found"));
+    public void deleteProduct(Integer id) throws ResourceNotFoundException {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
         productRepository.delete(product);
     }
 
-    public List<Product> getProductByAdminId(Integer id) throws Exception{
-        List<Product> productList = productRepository.findByAdmin_Id(id).orElseThrow();
-        return productList;
+    public List<Product> getProductByAdminId(Integer id) throws ResourceNotFoundException {
+        return productRepository.findByAdmin_Id(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Products not found for the given admin"));
     }
 }

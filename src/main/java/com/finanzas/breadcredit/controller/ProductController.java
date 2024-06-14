@@ -1,17 +1,14 @@
 package com.finanzas.breadcredit.controller;
 
 import com.finanzas.breadcredit.business.ProductBusiness;
-import com.finanzas.breadcredit.dto.creditaccount.CreditaccountDtoData;
 import com.finanzas.breadcredit.dto.product.ProductDtoData;
 import com.finanzas.breadcredit.dto.product.ProductDtoInsert;
-import com.finanzas.breadcredit.entity.Creditaccount;
 import com.finanzas.breadcredit.entity.Product;
+import com.finanzas.breadcredit.exception.ResourceNotFoundException;
 import com.finanzas.breadcredit.utility.UtilityDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -19,85 +16,53 @@ import java.util.List;
 @RequestMapping("/product")
 public class ProductController {
 
+    private final ProductBusiness productBusiness;
+
     @Autowired
-    private ProductBusiness productBusiness;
-
-    @PostMapping("")
-    public ResponseEntity<ProductDtoData> insertProduct(@RequestBody ProductDtoInsert productDtoInsert) {
-        Product product = UtilityDto.convertTo(productDtoInsert, Product.class);
-
-        try {
-            product = productBusiness.insertProduct(product);
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
-        }
-
-        ProductDtoData productDtoData = UtilityDto.convertTo(product, ProductDtoData.class);
-        return new ResponseEntity<>(productDtoData, HttpStatus.CREATED);
+    public ProductController(ProductBusiness productBusiness) {
+        this.productBusiness = productBusiness;
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProductDtoData> getProductById(@PathVariable Integer id) {
-        Product product;
-
-        try {
-            product = productBusiness.getProductById(id);
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        }
-
-        ProductDtoData productDtoData = UtilityDto.convertTo(product, ProductDtoData.class);
-        return new ResponseEntity<>(productDtoData, HttpStatus.OK);
+    @ResponseStatus(HttpStatus.OK)
+    public ProductDtoData getProductById(@PathVariable Integer id) throws ResourceNotFoundException {
+        Product product = productBusiness.getProductById(id);
+        return UtilityDto.convertTo(product, ProductDtoData.class);
     }
 
     @GetMapping("")
-    public ResponseEntity<List<ProductDtoData>> listProducts() {
-        List<Product> listProducts;
+    @ResponseStatus(HttpStatus.OK)
+    public List<ProductDtoData> listProducts() throws ResourceNotFoundException {
+        List<Product> listProducts = productBusiness.listProducts();
+        return UtilityDto.convertToList(listProducts, ProductDtoData.class);
+    }
 
-        try {
-            listProducts = productBusiness.listProducts();
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        }
-
-        List<ProductDtoData> productDtoDataList = UtilityDto.convertToList(listProducts, ProductDtoData.class);
-        return new ResponseEntity<>(productDtoDataList, HttpStatus.OK);
+    @PostMapping("")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ProductDtoData insertProduct(@RequestBody ProductDtoInsert productDtoInsert) throws ResourceNotFoundException {
+        Product product = UtilityDto.convertTo(productDtoInsert, Product.class);
+        product = productBusiness.insertProduct(product);
+        return UtilityDto.convertTo(product, ProductDtoData.class);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ProductDtoData> updateProduct(@PathVariable Integer id, @RequestBody ProductDtoInsert productDtoInsert) {
+    @ResponseStatus(HttpStatus.OK)
+    public ProductDtoData updateProduct(@PathVariable Integer id, @RequestBody ProductDtoInsert productDtoInsert) throws ResourceNotFoundException {
         Product product = UtilityDto.convertTo(productDtoInsert, Product.class);
-
-        try {
-            product = productBusiness.updateProduct(id, product);
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        }
-
-        ProductDtoData productDtoData = UtilityDto.convertTo(product, ProductDtoData.class);
-        return new ResponseEntity<>(productDtoData, HttpStatus.OK);
+        product = productBusiness.updateProduct(id, product);
+        return UtilityDto.convertTo(product, ProductDtoData.class);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProduct(@PathVariable Integer id) {
-        try {
-            productBusiness.deleteProduct(id);
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        }
-
-        return new ResponseEntity<>(HttpStatus.OK);
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteProduct(@PathVariable Integer id) throws ResourceNotFoundException {
+        productBusiness.deleteProduct(id);
     }
 
     @GetMapping("/admin/{id}")
-    public ResponseEntity<List<ProductDtoData>> getProductsByAdminId(@PathVariable Integer id) {
-        List<Product> listProducts;
-        try {
-            listProducts = productBusiness.getProductByAdminId(id);
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        }
-        List<ProductDtoData> productDtoDataList = UtilityDto.convertToList(listProducts, ProductDtoData.class);
-        return new ResponseEntity<>(productDtoDataList, HttpStatus.OK);
+    @ResponseStatus(HttpStatus.OK)
+    public List<ProductDtoData> getProductsByAdminId(@PathVariable Integer id) throws ResourceNotFoundException {
+        List<Product> listProducts = productBusiness.getProductByAdminId(id);
+        return UtilityDto.convertToList(listProducts, ProductDtoData.class);
     }
 }
