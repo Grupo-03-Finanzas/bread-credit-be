@@ -10,26 +10,26 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    ControllerError resourceNotFoundException(ResourceNotFoundException ex) {
-        return new ControllerError(HttpStatus.NOT_FOUND, ex);
+    ErrorResponse resourceNotFoundException(ResourceNotFoundException ex) {
+        return new ErrorResponse(HttpStatus.NOT_FOUND, ex);
     }
 
     @ExceptionHandler(ResourceConflictException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
-    ControllerError resourceNotFoundException(ResourceConflictException ex) {
-        return new ControllerError(HttpStatus.CONFLICT, ex);
+    ErrorResponse resourceNotFoundException(ResourceConflictException ex) {
+        return new ErrorResponse(HttpStatus.CONFLICT, ex);
     }
 
     @ExceptionHandler(LoginException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    ControllerError loginException(LoginException ex) {
-        return new ControllerError(HttpStatus.UNAUTHORIZED, ex);
+    ErrorResponse loginException(LoginException ex) {
+        return new ErrorResponse(HttpStatus.UNAUTHORIZED, ex);
     }
 
-    @ExceptionHandler(UnexpectedException.class)
-    @ResponseStatus(HttpStatus.OK)
-    ControllerError unexpectedException(UnexpectedException ex) {
-        return new ControllerError(HttpStatus.INTERNAL_SERVER_ERROR, ex);
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    ErrorResponse unexpectedException(Exception ex) {
+        return new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, ex);
     }
 
 }

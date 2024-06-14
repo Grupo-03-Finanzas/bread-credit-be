@@ -4,7 +4,6 @@ import com.finanzas.breadcredit.entity.Admin;
 import com.finanzas.breadcredit.exception.LoginException;
 import com.finanzas.breadcredit.exception.ResourceConflictException;
 import com.finanzas.breadcredit.exception.ResourceNotFoundException;
-import com.finanzas.breadcredit.exception.UnexpectedException;
 import com.finanzas.breadcredit.repository.AdminRepository;
 import com.finanzas.breadcredit.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,26 +24,18 @@ public class AdminBusiness {
         this.userRepository = userRepository;
     }
 
-    public Admin getAdminById(Integer id) throws ResourceNotFoundException, UnexpectedException {
+    public Admin getAdminById(Integer id) throws ResourceNotFoundException {
         Admin admin;
-        try {
-            admin = adminRepository.findById(id).orElse(null);
-        } catch (Exception e) {
-            throw new UnexpectedException(e.getMessage());
-        }
+        admin = adminRepository.findById(id).orElse(null);
         if (admin == null) {
             throw new ResourceNotFoundException("Admin { id=" + id + " } not found");
         }
         return admin;
     }
 
-    public List<Admin> listAdmins() throws ResourceNotFoundException, UnexpectedException {
+    public List<Admin> listAdmins() throws ResourceNotFoundException {
         List<Admin> adminList;
-        try {
-            adminList = adminRepository.findAll();
-        } catch (Exception e) {
-            throw new UnexpectedException(e.getMessage());
-        }
+        adminList = adminRepository.findAll();
         if (adminList.isEmpty()) {
             throw new ResourceNotFoundException("Admin list is empty");
         }
@@ -52,7 +43,7 @@ public class AdminBusiness {
     }
 
     @Transactional
-    public Admin insertAdmin(Admin admin) throws ResourceConflictException, UnexpectedException {
+    public Admin insertAdmin(Admin admin) throws ResourceConflictException {
         admin.setId(null);
         admin.getUser().setId(null);
         if (userRepository.existsByEmail(admin.getUser().getEmail())) {
@@ -61,15 +52,11 @@ public class AdminBusiness {
         if (userRepository.existsByDni(admin.getUser().getDni())) {
             throw new ResourceConflictException("User with  { dni='" + admin.getUser().getDni() + "' } already exists");
         }
-        try {
-            return adminRepository.save(admin);
-        } catch (Exception e) {
-            throw new UnexpectedException(e.getMessage());
-        }
+        return adminRepository.save(admin);
     }
 
     @Transactional
-    public Admin updateAdmin(Integer id, Admin admin) throws ResourceNotFoundException, ResourceConflictException, UnexpectedException {
+    public Admin updateAdmin(Integer id, Admin admin) throws ResourceNotFoundException, ResourceConflictException {
         admin.setId(id);
         admin.getUser().setId(id);
         Admin adminOld = getAdminById(id);
@@ -83,32 +70,20 @@ public class AdminBusiness {
                 throw new ResourceConflictException("User with  { dni='" + admin.getUser().getDni() + "' } already exists");
             }
         }
-        try {
-            userRepository.save(admin.getUser()); //lookup for CascadeType
-            return adminRepository.save(admin);
-        } catch (Exception e) {
-            throw new UnexpectedException(e.getMessage());
-        }
+        userRepository.save(admin.getUser()); //lookup for CascadeType
+        return adminRepository.save(admin);
     }
 
     @Transactional
-    public void deleteAdmin(Integer id) throws ResourceNotFoundException, UnexpectedException {
+    public void deleteAdmin(Integer id) throws ResourceNotFoundException {
         Admin admin = getAdminById(id);
-        try {
-            adminRepository.delete(admin);
-            userRepository.delete(admin.getUser());
-        } catch (Exception e) {
-            throw new UnexpectedException(e.getMessage());
-        }
+        adminRepository.delete(admin);
+        userRepository.delete(admin.getUser());
     }
 
-    public Admin loginAdmin(String dni, String password) throws LoginException, UnexpectedException {
+    public Admin loginAdmin(String dni, String password) throws LoginException {
         Admin admin;
-        try {
-            admin = adminRepository.findByUserDni(dni).orElse(null);
-        } catch (Exception e) {
-            throw new UnexpectedException(e.getMessage());
-        }
+        admin = adminRepository.findByUserDni(dni).orElse(null);
         if (admin == null) {
             throw new LoginException("Invalid email or password");
         }
