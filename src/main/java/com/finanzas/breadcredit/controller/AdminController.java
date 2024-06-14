@@ -58,8 +58,9 @@ public class AdminController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteAdmin(@PathVariable Integer id) throws ResourceNotFoundException {
+    public Void deleteAdmin(@PathVariable Integer id) throws ResourceNotFoundException {
         adminBusiness.deleteAdmin(id);
+        return null;
     }
 
     @PostMapping("/login")

@@ -25,8 +25,7 @@ public class AdminBusiness {
     }
 
     public Admin getAdminById(Integer id) throws ResourceNotFoundException {
-        Admin admin;
-        admin = adminRepository.findById(id).orElse(null);
+        Admin admin = adminRepository.findById(id).orElse(null);
         if (admin == null) {
             throw new ResourceNotFoundException("Admin { id=" + id + " } not found");
         }
@@ -34,8 +33,7 @@ public class AdminBusiness {
     }
 
     public List<Admin> listAdmins() throws ResourceNotFoundException {
-        List<Admin> adminList;
-        adminList = adminRepository.findAll();
+        List<Admin> adminList = adminRepository.findAll();
         if (adminList.isEmpty()) {
             throw new ResourceNotFoundException("Admin list is empty");
         }
@@ -82,8 +80,7 @@ public class AdminBusiness {
     }
 
     public Admin loginAdmin(String dni, String password) throws LoginException {
-        Admin admin;
-        admin = adminRepository.findByUserDni(dni).orElse(null);
+        Admin admin  = adminRepository.findByUserDni(dni).orElse(null);
         if (admin == null) {
             throw new LoginException("Invalid email or password");
         }

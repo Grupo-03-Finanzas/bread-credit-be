@@ -15,7 +15,6 @@ import java.util.List;
 @Service
 public class CustomerBusiness {
 
-
     private final CustomerRepository customerRepository;
     private final UserRepository userRepository;
 
@@ -26,8 +25,7 @@ public class CustomerBusiness {
     }
 
     public Customer getCustomerById(Integer id) throws ResourceNotFoundException {
-        Customer customer;
-        customer = customerRepository.findById(id).orElse(null);
+        Customer customer = customerRepository.findById(id).orElse(null);
         if (customer == null) {
             throw new ResourceNotFoundException("Customer { id=" + id + " } not found");
         }
@@ -82,8 +80,7 @@ public class CustomerBusiness {
     }
 
     public Customer loginCustomer(String dni, String password) throws LoginException {
-        Customer customer;
-        customer = customerRepository.findByUser_Dni(dni).orElse(null);
+        Customer customer = customerRepository.findByUser_Dni(dni).orElse(null);
         if (customer == null) {
             throw new LoginException("Invalid email or password");
         }
@@ -94,8 +91,7 @@ public class CustomerBusiness {
     }
 
     public Customer getCustomerByDni(String dni) throws ResourceNotFoundException {
-        Customer customer;
-        customer = customerRepository.findByUser_Dni(dni).orElse(null);
+        Customer customer = customerRepository.findByUser_Dni(dni).orElse(null);
         if (customer == null) {
             throw new ResourceNotFoundException("Customer { dni=" + dni + " } not found");
         }
