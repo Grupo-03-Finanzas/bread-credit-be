@@ -7,8 +7,11 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CreditaccountRepository extends JpaRepository<Creditaccount, Integer> {
-    Boolean existsByCustomerIdAndAdminId(Integer customerId, Integer adminId);
+
+    Boolean existsByCustomer_IdAndAdmin_Id(Integer customerId, Integer adminId);
+
     Optional<List<Creditaccount>> findByAdmin_Id(Integer adminId);
+
     Optional<Creditaccount> findByAdmin_IdAndCustomer_Id(Integer adminId, Integer customerId);
     Optional<Creditaccount> findByCustomer_Id(Integer customerId);
     Optional<Creditaccount> findByCustomer_User_Dni(String dni);

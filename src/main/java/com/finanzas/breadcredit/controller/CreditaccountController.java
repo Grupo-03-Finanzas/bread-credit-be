@@ -4,12 +4,12 @@ import com.finanzas.breadcredit.business.CreditaccountBusiness;
 import com.finanzas.breadcredit.dto.creditaccount.CreditaccountDtoData;
 import com.finanzas.breadcredit.dto.creditaccount.CreditaccountDtoInsert;
 import com.finanzas.breadcredit.entity.Creditaccount;
+import com.finanzas.breadcredit.exception.ResourceConflictException;
+import com.finanzas.breadcredit.exception.ResourceNotFoundException;
 import com.finanzas.breadcredit.utility.UtilityDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -17,112 +17,75 @@ import java.util.List;
 @RequestMapping("/creditaccount")
 public class CreditaccountController {
 
-    @Autowired
-    private CreditaccountBusiness creditaccountBusiness;
+    private final CreditaccountBusiness creditaccountBusiness;
 
-    @PostMapping("")
-    public ResponseEntity<CreditaccountDtoData> insertCreditaccount(@RequestBody CreditaccountDtoInsert creditaccountDtoInsert) {
-        Creditaccount creditaccount = UtilityDto.convertTo(creditaccountDtoInsert, Creditaccount.class);
-        try {
-            creditaccount = creditaccountBusiness.insertCreditaccount(creditaccount);
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
-        }
-        CreditaccountDtoData creditaccountDtoData = UtilityDto.convertTo(creditaccount, CreditaccountDtoData.class);
-        return new ResponseEntity<>(creditaccountDtoData, HttpStatus.CREATED);
+    @Autowired
+    public CreditaccountController(CreditaccountBusiness creditaccountBusiness) {
+        this.creditaccountBusiness = creditaccountBusiness;
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CreditaccountDtoData> getCreditaccountById(@PathVariable Integer id) {
-        Creditaccount creditaccount;
-        try {
-            creditaccount = creditaccountBusiness.getCreditaccountById(id);
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        }
-        CreditaccountDtoData creditaccountDtoData = UtilityDto.convertTo(creditaccount, CreditaccountDtoData.class);
-        return new ResponseEntity<>(creditaccountDtoData, HttpStatus.OK);
+    @ResponseStatus(HttpStatus.OK)
+    public CreditaccountDtoData getCreditaccountById(@PathVariable Integer id) throws ResourceNotFoundException {
+        Creditaccount creditaccount = creditaccountBusiness.getCreditaccountById(id);
+        return UtilityDto.convertTo(creditaccount, CreditaccountDtoData.class);
     }
 
     @GetMapping("")
-    public ResponseEntity<List<CreditaccountDtoData>> listCreditaccounts() {
-        List<Creditaccount> listCreditaccounts;
-        try {
-            listCreditaccounts = creditaccountBusiness.listCreditaccounts();
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        }
-        List<CreditaccountDtoData> creditaccountDtoDataList = UtilityDto.convertToList(listCreditaccounts, CreditaccountDtoData.class);
-        return new ResponseEntity<>(creditaccountDtoDataList, HttpStatus.OK);
+    @ResponseStatus(HttpStatus.OK)
+    public List<CreditaccountDtoData> listCreditaccounts() throws ResourceNotFoundException {
+        List<Creditaccount> listCreditaccounts = creditaccountBusiness.listCreditaccounts();
+        return UtilityDto.convertToList(listCreditaccounts, CreditaccountDtoData.class);
+    }
+
+    @PostMapping("")
+    @ResponseStatus(HttpStatus.CREATED)
+    public CreditaccountDtoData insertCreditaccount(@RequestBody CreditaccountDtoInsert creditaccountDtoInsert) throws ResourceNotFoundException, ResourceConflictException {
+        Creditaccount creditaccount = UtilityDto.convertTo(creditaccountDtoInsert, Creditaccount.class);
+        creditaccount = creditaccountBusiness.insertCreditaccount(creditaccount);
+        return UtilityDto.convertTo(creditaccount, CreditaccountDtoData.class);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CreditaccountDtoData> updateCreditaccount(@PathVariable Integer id, @RequestBody CreditaccountDtoInsert creditaccountDtoInsert) {
+    @ResponseStatus(HttpStatus.OK)
+    public CreditaccountDtoData updateCreditaccount(@PathVariable Integer id, @RequestBody CreditaccountDtoInsert creditaccountDtoInsert) throws ResourceNotFoundException, ResourceConflictException {
         Creditaccount creditaccount = UtilityDto.convertTo(creditaccountDtoInsert, Creditaccount.class);
-        try {
-            creditaccount = creditaccountBusiness.updateCreditaccount(id, creditaccount);
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        }
-        CreditaccountDtoData creditaccountDtoData = UtilityDto.convertTo(creditaccount, CreditaccountDtoData.class);
-        return new ResponseEntity<>(creditaccountDtoData, HttpStatus.OK);
+        creditaccount = creditaccountBusiness.updateCreditaccount(id, creditaccount);
+        return UtilityDto.convertTo(creditaccount, CreditaccountDtoData.class);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Integer id) {
-        try {
-            creditaccountBusiness.deleteCreditaccount(id);
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        }
-        return new ResponseEntity<>(HttpStatus.OK);
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public Void delete(@PathVariable Integer id) throws ResourceNotFoundException {
+        creditaccountBusiness.deleteCreditaccount(id);
+        return null;
     }
 
     @GetMapping("/admin/{id}")
-    public ResponseEntity<List<CreditaccountDtoData>> getCreditaccountsByAdminId(@PathVariable Integer id) {
-        List<Creditaccount> listCreditaccounts;
-        try {
-            listCreditaccounts = creditaccountBusiness.getCreditAccountByAdminId(id);
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        }
-        List<CreditaccountDtoData> creditaccountDtoDataList = UtilityDto.convertToList(listCreditaccounts, CreditaccountDtoData.class);
-        return new ResponseEntity<>(creditaccountDtoDataList, HttpStatus.OK);
+    @ResponseStatus(HttpStatus.OK)
+    public List<CreditaccountDtoData> getCreditaccountsByAdminId(@PathVariable Integer id) throws ResourceNotFoundException {
+        List<Creditaccount> listCreditaccounts = creditaccountBusiness.getCreditAccountsByAdminId(id);
+        return UtilityDto.convertToList(listCreditaccounts, CreditaccountDtoData.class);
     }
 
     @GetMapping("/admin/{adminId}/customer/{customerId}")
-    public ResponseEntity<CreditaccountDtoData> getCreditaccountByAdminIdANDCustomerId(@PathVariable Integer adminId, @PathVariable Integer customerId) {
-        Creditaccount creditaccount;
-        try {
-            creditaccount = creditaccountBusiness.getCreditaccountByAdminIdANDCustomerId(adminId, customerId);
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        }
-        CreditaccountDtoData creditaccountDtoData = UtilityDto.convertTo(creditaccount, CreditaccountDtoData.class);
-        return new ResponseEntity<>(creditaccountDtoData, HttpStatus.OK);
+    @ResponseStatus(HttpStatus.OK)
+    public CreditaccountDtoData getCreditaccountByAdminIdANDCustomerId(@PathVariable Integer adminId, @PathVariable Integer customerId) throws ResourceNotFoundException {
+        Creditaccount creditaccount = creditaccountBusiness.getCreditaccountByAdmin_IdANDCustomer_Id(adminId, customerId);
+        return UtilityDto.convertTo(creditaccount, CreditaccountDtoData.class);
     }
 
     @GetMapping("/customer/{id}")
-    public ResponseEntity<CreditaccountDtoData> getCreditaccountByAdminId(@PathVariable Integer id) {
-        Creditaccount creditaccount;
-        try {
-            creditaccount = creditaccountBusiness.getCreditaccountByCustomerId(id);
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        }
-        CreditaccountDtoData creditaccountDtoData = UtilityDto.convertTo(creditaccount, CreditaccountDtoData.class);
-        return new ResponseEntity<>(creditaccountDtoData, HttpStatus.OK);
+    @ResponseStatus(HttpStatus.OK)
+    public CreditaccountDtoData getCreditaccountByAdminId(@PathVariable Integer id) throws ResourceNotFoundException {
+        Creditaccount creditaccount = creditaccountBusiness.getCreditaccountByCustomer_Id(id);
+        return UtilityDto.convertTo(creditaccount, CreditaccountDtoData.class);
     }
 
     @GetMapping("/customer/dni/{dni}")
-    public ResponseEntity<CreditaccountDtoData> getCreditaccountByCustomerDni(@PathVariable String dni){
-        Creditaccount creditaccount;
-        try {
-            creditaccount = creditaccountBusiness.getCreditaccountByCustomerDni(dni);
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        }
-        CreditaccountDtoData creditaccountDtoData = UtilityDto.convertTo(creditaccount, CreditaccountDtoData.class);
-        return new ResponseEntity<>(creditaccountDtoData, HttpStatus.OK);
+    @ResponseStatus(HttpStatus.OK)
+    public CreditaccountDtoData getCreditaccountByCustomerDni(@PathVariable String dni) throws ResourceNotFoundException {
+        Creditaccount creditaccount = creditaccountBusiness.getCreditaccountByCustomerDni(dni);
+        return UtilityDto.convertTo(creditaccount, CreditaccountDtoData.class);
     }
 }
