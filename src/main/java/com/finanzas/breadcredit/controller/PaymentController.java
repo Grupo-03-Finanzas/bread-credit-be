@@ -1,16 +1,14 @@
 package com.finanzas.breadcredit.controller;
 
-
 import com.finanzas.breadcredit.business.PaymentBusiness;
 import com.finanzas.breadcredit.dto.payment.PaymentDtoData;
 import com.finanzas.breadcredit.dto.payment.PaymentDtoInsert;
 import com.finanzas.breadcredit.entity.Payment;
+import com.finanzas.breadcredit.exception.ResourceNotFoundException;
 import com.finanzas.breadcredit.utility.UtilityDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -18,64 +16,47 @@ import java.util.List;
 @RequestMapping("/payment")
 public class PaymentController {
 
-    @Autowired
-    private PaymentBusiness paymentBusiness;
+    private final PaymentBusiness paymentBusiness;
 
-    @PostMapping("")
-    public ResponseEntity<PaymentDtoData> insertPayment(@RequestBody PaymentDtoInsert paymentDtoInsert) {
-        Payment payment = UtilityDto.convertTo(paymentDtoInsert, Payment.class);
-        try {
-            payment = paymentBusiness.insertPayment(payment);
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
-        }
-        PaymentDtoData paymentDtoData = UtilityDto.convertTo(payment, PaymentDtoData.class);
-        return new ResponseEntity<>(paymentDtoData, HttpStatus.CREATED);
+    @Autowired
+    public PaymentController(PaymentBusiness paymentBusiness) {
+        this.paymentBusiness = paymentBusiness;
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PaymentDtoData> getPaymentById(@PathVariable Integer id) {
-        Payment payment;
-        try {
-            payment = paymentBusiness.getPaymentById(id);
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        }
-        PaymentDtoData paymentDtoData = UtilityDto.convertTo(payment, PaymentDtoData.class);
-        return new ResponseEntity<>(paymentDtoData, HttpStatus.OK);
+    @ResponseStatus(HttpStatus.OK)
+    public PaymentDtoData getPaymentById(@PathVariable Integer id) throws ResourceNotFoundException {
+        Payment payment = paymentBusiness.getPaymentById(id);
+        return UtilityDto.convertTo(payment, PaymentDtoData.class);
     }
 
     @GetMapping("")
-    public ResponseEntity<List<PaymentDtoData>> listPayments() {
-        List<Payment> paymentList;
-        try {
-            paymentList = paymentBusiness.listPayments();
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        }
-        List<PaymentDtoData> paymentDtoDataList = UtilityDto.convertToList(paymentList, PaymentDtoData.class);
-        return new ResponseEntity<>(paymentDtoDataList, HttpStatus.OK);
+    @ResponseStatus(HttpStatus.OK)
+    public List<PaymentDtoData> listPayments() {
+        List<Payment> paymentList = paymentBusiness.listPayments();
+        return UtilityDto.convertToList(paymentList, PaymentDtoData.class);
+    }
+
+    @PostMapping("")
+    @ResponseStatus(HttpStatus.CREATED)
+    public PaymentDtoData insertPayment(@RequestBody PaymentDtoInsert paymentDtoInsert) {
+        Payment payment = UtilityDto.convertTo(paymentDtoInsert, Payment.class);
+        payment = paymentBusiness.insertPayment(payment);
+        return UtilityDto.convertTo(payment, PaymentDtoData.class);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PaymentDtoData> updatePayment(@PathVariable Integer id, @RequestBody PaymentDtoInsert paymentDtoInsert) {
+    @ResponseStatus(HttpStatus.OK)
+    public PaymentDtoData updatePayment(@PathVariable Integer id, @RequestBody PaymentDtoInsert paymentDtoInsert) throws ResourceNotFoundException {
         Payment payment = UtilityDto.convertTo(paymentDtoInsert, Payment.class);
-        try {
-            payment = paymentBusiness.updatePayment(id, payment);
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        }
-        PaymentDtoData paymentDtoData = UtilityDto.convertTo(payment, PaymentDtoData.class);
-        return new ResponseEntity<>(paymentDtoData, HttpStatus.OK);
+        payment = paymentBusiness.updatePayment(id, payment);
+        return UtilityDto.convertTo(payment, PaymentDtoData.class);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePayment(@PathVariable Integer id) {
-        try {
-            paymentBusiness.deletePayment(id);
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        }
-        return new ResponseEntity<>(HttpStatus.OK);
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public Void deletePayment(@PathVariable Integer id) throws ResourceNotFoundException {
+        paymentBusiness.deletePayment(id);
+        return null;
     }
 }
