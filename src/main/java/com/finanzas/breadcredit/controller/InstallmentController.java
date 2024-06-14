@@ -1,80 +1,62 @@
 package com.finanzas.breadcredit.controller;
 
-
 import com.finanzas.breadcredit.business.InstallmentBusiness;
 import com.finanzas.breadcredit.dto.installment.InstallmentDtoData;
 import com.finanzas.breadcredit.dto.installment.InstallmentDtoInsert;
 import com.finanzas.breadcredit.entity.Installment;
+import com.finanzas.breadcredit.exception.ResourceNotFoundException;
 import com.finanzas.breadcredit.utility.UtilityDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/installment")
 public class InstallmentController {
-    @Autowired
-    private InstallmentBusiness installmentBusiness;
 
-    @PostMapping("")
-    public ResponseEntity<InstallmentDtoData> createInstallment(@RequestBody InstallmentDtoInsert installmentDtoInsert) {
-        Installment installment = UtilityDto.convertTo(installmentDtoInsert, Installment.class);
-        try {
-            installment = installmentBusiness.insertInstallment(installment);
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
-        }
-        InstallmentDtoData installmentDtoData = UtilityDto.convertTo(installment, InstallmentDtoData.class);
-        return new ResponseEntity<>(installmentDtoData, HttpStatus.CREATED);
+    private final InstallmentBusiness installmentBusiness;
+
+    @Autowired
+    public InstallmentController(InstallmentBusiness installmentBusiness) {
+        this.installmentBusiness = installmentBusiness;
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<InstallmentDtoData> getInstallmentById(@PathVariable Integer id) {
-        Installment installment;
-        try {
-            installment = installmentBusiness.getInstallmentById(id);
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        }
-        InstallmentDtoData installmentDtoData = UtilityDto.convertTo(installment, InstallmentDtoData.class);
-        return new ResponseEntity<>(installmentDtoData, HttpStatus.OK);
+    @ResponseStatus(HttpStatus.OK)
+    public InstallmentDtoData getInstallmentById(@PathVariable Integer id) throws ResourceNotFoundException {
+        Installment installment = installmentBusiness.getInstallmentById(id);
+        return UtilityDto.convertTo(installment, InstallmentDtoData.class);
     }
 
     @GetMapping("")
-    public ResponseEntity<List<InstallmentDtoData>> listInstallments() {
-        List<Installment> installmentList;
-        try {
-            installmentList = installmentBusiness.listInstallments();
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        }
-        List<InstallmentDtoData> installmentDtoDataList = UtilityDto.convertToList(installmentList, InstallmentDtoData.class);
-        return new ResponseEntity<>(installmentDtoDataList, HttpStatus.OK);
+    @ResponseStatus(HttpStatus.OK)
+    public List<InstallmentDtoData> listInstallments() throws ResourceNotFoundException {
+        List<Installment> installmentList = installmentBusiness.listInstallments();
+        return UtilityDto.convertToList(installmentList, InstallmentDtoData.class);
+    }
+
+    @PostMapping("")
+    @ResponseStatus(HttpStatus.CREATED)
+    public InstallmentDtoData insertInstallment(@RequestBody InstallmentDtoInsert installmentDtoInsert) throws ResourceNotFoundException {
+        Installment installment = UtilityDto.convertTo(installmentDtoInsert, Installment.class);
+        installment = installmentBusiness.insertInstallment(installment);
+        return UtilityDto.convertTo(installment, InstallmentDtoData.class);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<InstallmentDtoData> updateInstallment(@PathVariable Integer id, @RequestBody InstallmentDtoInsert installmentDtoInsert) {
+    @ResponseStatus(HttpStatus.OK)
+    public InstallmentDtoData updateInstallment(@PathVariable Integer id, @RequestBody InstallmentDtoInsert installmentDtoInsert) throws ResourceNotFoundException {
         Installment installment = UtilityDto.convertTo(installmentDtoInsert, Installment.class);
-        try {
-            installment = installmentBusiness.updateInstallment(id, installment);
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        }
-        InstallmentDtoData installmentDtoData = UtilityDto.convertTo(installment, InstallmentDtoData.class);
-        return new ResponseEntity<>(installmentDtoData, HttpStatus.OK);
+        installment = installmentBusiness.updateInstallment(id, installment);
+        return UtilityDto.convertTo(installment, InstallmentDtoData.class);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteInstallment(@PathVariable Integer id) {
-        try {
-            installmentBusiness.deleteInstallment(id);
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        }
-        return new ResponseEntity<>(HttpStatus.OK);
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public Void deleteInstallment(@PathVariable Integer id) throws ResourceNotFoundException {
+        installmentBusiness.deleteInstallment(id);
+        return null;
     }
 }

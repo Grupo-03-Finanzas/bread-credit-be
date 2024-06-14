@@ -1,7 +1,7 @@
 package com.finanzas.breadcredit.business;
 
-
 import com.finanzas.breadcredit.entity.Installment;
+import com.finanzas.breadcredit.exception.ResourceNotFoundException;
 import com.finanzas.breadcredit.repository.InstallmentRepository;
 import com.finanzas.breadcredit.repository.PaymentRepository;
 import com.finanzas.breadcredit.repository.PurchaseRepository;
@@ -14,58 +14,60 @@ import java.util.List;
 @Service
 public class InstallmentBusiness {
 
-    @Autowired
-    private InstallmentRepository installmentRepository;
+    private final InstallmentRepository installmentRepository;
+    private final PurchaseRepository purchaseRepository;
+    private final PaymentRepository paymentRepository;
 
     @Autowired
-    private PurchaseRepository purchaseRepository;
-
-    @Autowired
-    private PaymentRepository paymentRepository;
-
-    public Installment insertInstallment(Installment installment) throws Exception {
-        installment.setId(null);
-        if (!purchaseRepository.existsById(installment.getPurchase().getId())) {
-            throw new Exception("Purchase not found");
-        }
-        if (!paymentRepository.existsById(installment.getPayment().getId())) {
-            throw new Exception("Payment not found");
-        }
-        return installmentRepository.save(installment);
+    public InstallmentBusiness(InstallmentRepository installmentRepository, PurchaseRepository purchaseRepository, PaymentRepository paymentRepository) {
+        this.installmentRepository = installmentRepository;
+        this.purchaseRepository = purchaseRepository;
+        this.paymentRepository = paymentRepository;
     }
 
-    public Installment getInstallmentById(Integer id) throws Exception {
-        return installmentRepository.findById(id).orElseThrow(() -> new Exception("Installment not found"));
+    public Installment getInstallmentById(Integer id) throws ResourceNotFoundException {
+        return installmentRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Installment { id=" + id + "} not found"));
     }
 
-    public List<Installment> listInstallments() throws Exception {
+    public List<Installment> listInstallments() throws ResourceNotFoundException {
         List<Installment> installmentList = installmentRepository.findAll();
-        //if(installmentList.isEmpty()) {
-        //    throw new Exception("No installments found");
-        //}
+        if (installmentList.isEmpty()) {
+            throw new ResourceNotFoundException("Installment not found");
+        }
         return installmentList;
     }
 
+    public Installment insertInstallment(Installment installment) throws ResourceNotFoundException {
+        installment.setId(null);
+        if (!purchaseRepository.existsById(installment.getPurchase().getId())) {
+            throw new ResourceNotFoundException("Purchase { id=" + installment.getPurchase().getId() + "} not found");
+        }
+        if (!paymentRepository.existsById(installment.getPayment().getId())) {
+            throw new ResourceNotFoundException("Payment { id=" + installment.getPayment().getId() + "} not found");
+        }
+        return installmentRepository.save(installment);
+    }
+
     @Transactional
-    public Installment updateInstallment(Integer id, Installment installment) throws Exception {
+    public Installment updateInstallment(Integer id, Installment installment) throws ResourceNotFoundException {
         installment.setId(id);
 
         if (!installmentRepository.existsById(id)) {
-            throw new Exception("Installment not found");
+            throw new ResourceNotFoundException("Installment { id=" + id + "} not found");
         }
         if (!purchaseRepository.existsById(installment.getPurchase().getId())) {
-            throw new Exception("Purchase not found");
+            throw new ResourceNotFoundException("Purchase { id=" + installment.getPurchase().getId() + "} not found");
         }
         if (!paymentRepository.existsById(installment.getPayment().getId())) {
-            throw new Exception("Payment not found");
+            throw new ResourceNotFoundException("Payment { id=" + installment.getPayment().getId() + "} not found");
         }
 
         return installmentRepository.save(installment);
     }
 
     @Transactional
-    public void deleteInstallment(Integer id) throws Exception {
-        Installment installment = installmentRepository.findById(id).orElseThrow(() -> new Exception("Installment not found"));
+    public void deleteInstallment(Integer id) throws ResourceNotFoundException {
+        Installment installment = installmentRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Installment { id=" + id + "} not found"));
         installmentRepository.delete(installment);
     }
 }
