@@ -1,14 +1,19 @@
 package com.finanzas.breadcredit.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Getter @Setter @NoArgsConstructor
+@Getter
+@Setter
+@NoArgsConstructor
 @AllArgsConstructor
-@ToString
 @Entity
 @Table(name = "customer")
 public class Customer {
+
     @Id
     @Column(name = "customer_id", nullable = false)
     private Integer id;
