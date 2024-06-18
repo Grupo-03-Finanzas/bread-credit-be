@@ -25,7 +25,7 @@ public class Invoice {
 
     @OneToMany(mappedBy = "invoice")
     private Set<Purchase> purchases;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "payment_id")
     private Payment payment;
 

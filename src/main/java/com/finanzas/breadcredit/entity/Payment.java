@@ -22,6 +22,11 @@ public class Payment {
     @Column(name = "payment_id", nullable = false)
     private Long id;
 
+    @OneToOne(mappedBy = "payment")
+    private Invoice invoice;
+    @OneToOne(mappedBy = "payment")
+    private Installment installment;
+
     @Column(name = "amount", nullable = false, precision = 16, scale = 12)
     private BigDecimal amount;
     @Column(name = "\"time\"", nullable = false)
