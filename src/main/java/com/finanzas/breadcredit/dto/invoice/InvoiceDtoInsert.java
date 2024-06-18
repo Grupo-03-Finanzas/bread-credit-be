@@ -1,23 +1,33 @@
 package com.finanzas.breadcredit.dto.invoice;
 
-import com.finanzas.breadcredit.dto.payment.PaymentDtoInsert;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Set;
 
 /**
  * DTO for {@link com.finanzas.breadcredit.entity.Invoice}
  */
-@Getter
-@Setter
-@NoArgsConstructor
+@Data
 @AllArgsConstructor
-@ToString
+@NoArgsConstructor
 public class InvoiceDtoInsert implements Serializable {
-    Integer id;
-    PaymentDtoInsert payment;
-    LocalDate dueDate;
-    BigDecimal amount;
+    private Long id;
+    private Set<PurchaseDto> purchases;
+    private LocalDate dueDate;
+    private BigDecimal amount;
+
+    /**
+     * DTO for {@link com.finanzas.breadcredit.entity.Purchase}
+     */
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class PurchaseDto implements Serializable {
+        private Long id;
+    }
 }

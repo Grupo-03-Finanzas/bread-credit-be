@@ -1,6 +1,8 @@
 package com.finanzas.breadcredit.dto.payment;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -9,13 +11,11 @@ import java.time.Instant;
 /**
  * DTO for {@link com.finanzas.breadcredit.entity.Payment}
  */
-@Getter
-@Setter
-@NoArgsConstructor
+@Data
 @AllArgsConstructor
-@ToString
+@NoArgsConstructor
 public class PaymentDtoData implements Serializable {
-    Integer id;
-    BigDecimal amount;
-    Instant time;
+    private Long id;
+    private BigDecimal amount;
+    private Instant time;
 }

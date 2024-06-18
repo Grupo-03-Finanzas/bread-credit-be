@@ -8,11 +8,9 @@ import java.io.Serializable;
 /**
  * DTO for {@link com.finanzas.breadcredit.entity.Customer}
  */
-@Getter
-@Setter
-@NoArgsConstructor
+@Data
 @AllArgsConstructor
-@ToString
+@NoArgsConstructor
 public class CustomerDtoInsert implements Serializable {
     Integer id;
     UserDtoInsert user;

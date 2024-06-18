@@ -1,8 +1,8 @@
 package com.finanzas.breadcredit.dto.creditaccount;
 
-import com.finanzas.breadcredit.dto.customer.CustomerDtoData;
-import com.finanzas.breadcredit.dto.admin.AdminDtoData;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -10,32 +10,83 @@ import java.math.BigDecimal;
 /**
  * DTO for {@link com.finanzas.breadcredit.entity.Creditaccount}
  */
-@Getter
-@Setter
-@NoArgsConstructor
+@Data
 @AllArgsConstructor
-@ToString
+@NoArgsConstructor
 public class CreditaccountDtoData implements Serializable {
-    Integer id;
-    CustomerDtoData customer;
-    AdminDtoData admin;
-    Boolean active;
-    BigDecimal maxCredit;
-    BigDecimal currentCredit;
-    Integer billingDay;
-    String creditTypeOfRate;
-    BigDecimal creditRate;
-    Integer creditCompounding;
-    String invoicePenaltyRateType;
-    BigDecimal invoicePenaltyRate;
-    Integer invoicePenaltyCompouding;
-    String installmentPenaltyRateType;
-    BigDecimal installmentPenaltyRate;
-    Integer installmentPenaltyCompouding;
-    String invoiceCompensatoryRateType;
-    BigDecimal invoiceCompensatoryRate;
-    Integer invoiceCompensatoryCompouding;
-    String installmentCompensatoryRateType;
-    BigDecimal installmentCompensatoryRate;
-    Integer installmentCompensatoryCompouding;
+    private Long id;
+    private CustomerDto customer;
+    private AdminDto admin;
+    private Boolean active = false;
+    private BigDecimal maxCredit;
+    private BigDecimal currentCredit;
+    private Long billingDay;
+    private String creditTypeOfRate;
+    private BigDecimal creditRate;
+    private Long creditCompounding;
+    private String invoicePenaltyRateType;
+    private BigDecimal invoicePenaltyRate;
+    private Long invoicePenaltyCompouding;
+    private String installmentPenaltyRateType;
+    private BigDecimal installmentPenaltyRate;
+    private Long installmentPenaltyCompouding;
+    private String invoiceCompensatoryRateType;
+    private BigDecimal invoiceCompensatoryRate;
+    private Long invoiceCompensatoryCompouding;
+    private String installmentCompensatoryRateType;
+    private BigDecimal installmentCompensatoryRate;
+    private Long installmentCompensatoryCompouding;
+
+    /**
+     * DTO for {@link com.finanzas.breadcredit.entity.Customer}
+     */
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class CustomerDto implements Serializable {
+        private Long id;
+        private UserDto user;
+        private String address;
+
+        /**
+         * DTO for {@link com.finanzas.breadcredit.entity.User}
+         */
+        @Data
+        @AllArgsConstructor
+        @NoArgsConstructor
+        public static class UserDto implements Serializable {
+            private String firstName;
+            private String lastName;
+            private String dni;
+            private String phone;
+            private String email;
+        }
+    }
+
+    /**
+     * DTO for {@link com.finanzas.breadcredit.entity.Admin}
+     */
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class AdminDto implements Serializable {
+        private Long id;
+        private UserDto user;
+        private String businessName;
+        private String businessType;
+
+        /**
+         * DTO for {@link com.finanzas.breadcredit.entity.User}
+         */
+        @Data
+        @AllArgsConstructor
+        @NoArgsConstructor
+        public static class UserDto implements Serializable {
+            private String firstName;
+            private String lastName;
+            private String dni;
+            private String phone;
+            private String email;
+        }
+    }
 }

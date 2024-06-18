@@ -1,7 +1,8 @@
 package com.finanzas.breadcredit.dto.product;
 
-import com.finanzas.breadcredit.dto.admin.AdminDtoData;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -9,14 +10,22 @@ import java.math.BigDecimal;
 /**
  * DTO for {@link com.finanzas.breadcredit.entity.Product}
  */
-@Getter
-@Setter
-@NoArgsConstructor
+@Data
 @AllArgsConstructor
-@ToString
+@NoArgsConstructor
 public class ProductDtoData implements Serializable {
-    Integer id;
-    AdminDtoData admin;
-    String name;
-    BigDecimal price;
+    private Long id;
+    private AdminDto admin;
+    private String name;
+    private BigDecimal price;
+
+    /**
+     * DTO for {@link com.finanzas.breadcredit.entity.Admin}
+     */
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class AdminDto implements Serializable {
+        private Long id;
+    }
 }
