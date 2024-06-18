@@ -7,8 +7,6 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.time.LocalDate;
-import java.util.Set;
 
 /**
  * DTO for {@link com.finanzas.breadcredit.entity.Purchase}
@@ -19,8 +17,6 @@ import java.util.Set;
 public class PurchaseDtoInsert implements Serializable {
     private Long id;
     private CreditaccountDto creditaccount;
-    private Set<InstallmentDto> installments;
-    private InvoiceDto invoice;
     private BigDecimal initialCost;
     private Instant time;
     private Long installmentNumber;
@@ -44,27 +40,4 @@ public class PurchaseDtoInsert implements Serializable {
         private Long id;
     }
 
-    /**
-     * DTO for {@link com.finanzas.breadcredit.entity.Installment}
-     */
-    @Data
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class InstallmentDto implements Serializable {
-        private Long id;
-        private LocalDate dueDate;
-        private BigDecimal amount;
-    }
-
-    /**
-     * DTO for {@link com.finanzas.breadcredit.entity.Invoice}
-     */
-    @Data
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class InvoiceDto implements Serializable {
-        private Long id;
-        private LocalDate dueDate;
-        private BigDecimal amount;
-    }
 }
