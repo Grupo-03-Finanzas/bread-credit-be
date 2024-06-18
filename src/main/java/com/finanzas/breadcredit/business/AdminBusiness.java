@@ -68,7 +68,6 @@ public class AdminBusiness {
                 throw new ResourceConflictException("User with  { dni='" + admin.getUser().getDni() + "' } already exists");
             }
         }
-        userRepository.save(admin.getUser()); //lookup for CascadeType
         return adminRepository.save(admin);
     }
 
@@ -76,7 +75,6 @@ public class AdminBusiness {
     public void deleteAdmin(Long id) throws ResourceNotFoundException {
         Admin admin = getAdminById(id);
         adminRepository.delete(admin);
-        userRepository.delete(admin.getUser());
     }
 
     public Admin loginAdmin(String dni, String password) throws LoginException {

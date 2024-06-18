@@ -19,7 +19,7 @@ public class Customer {
     private Long id;
 
     @MapsId
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, optional = false)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, optional = false) //
     @JoinColumn(name = "customer_id", nullable = false)
     private User user;
 

@@ -68,7 +68,6 @@ public class CustomerBusiness {
                 throw new ResourceConflictException("User with  { dni='" + customer.getUser().getDni() + "' } already exists");
             }
         }
-        userRepository.save(customer.getUser()); //lookup for CascadeType
         return customerRepository.save(customer);
     }
 
@@ -76,7 +75,6 @@ public class CustomerBusiness {
     public void deleteCustomer(Long id) throws ResourceNotFoundException {
         Customer customer = getCustomerById(id);
         customerRepository.delete(customer);
-        userRepository.delete(customer.getUser());
     }
 
     public Customer loginCustomer(String dni, String password) throws LoginException {
