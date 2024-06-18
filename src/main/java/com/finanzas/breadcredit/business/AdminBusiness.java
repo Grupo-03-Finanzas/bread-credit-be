@@ -24,7 +24,7 @@ public class AdminBusiness {
         this.userRepository = userRepository;
     }
 
-    public Admin getAdminById(Integer id) throws ResourceNotFoundException {
+    public Admin getAdminById(Long id) throws ResourceNotFoundException {
         Admin admin = adminRepository.findById(id).orElse(null);
         if (admin == null) {
             throw new ResourceNotFoundException("Admin { id=" + id + " } not found");
@@ -54,7 +54,7 @@ public class AdminBusiness {
     }
 
     @Transactional
-    public Admin updateAdmin(Integer id, Admin admin) throws ResourceNotFoundException, ResourceConflictException {
+    public Admin updateAdmin(Long id, Admin admin) throws ResourceNotFoundException, ResourceConflictException {
         admin.setId(id);
         admin.getUser().setId(id);
         Admin adminOld = getAdminById(id);
@@ -73,7 +73,7 @@ public class AdminBusiness {
     }
 
     @Transactional
-    public void deleteAdmin(Integer id) throws ResourceNotFoundException {
+    public void deleteAdmin(Long id) throws ResourceNotFoundException {
         Admin admin = getAdminById(id);
         adminRepository.delete(admin);
         userRepository.delete(admin.getUser());

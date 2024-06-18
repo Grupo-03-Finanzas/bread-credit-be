@@ -20,7 +20,7 @@ public class InvoiceBusiness {
         this.invoiceRepository = invoiceRepository;
     }
 
-    public Invoice getInvoiceById(Integer id) throws ResourceNotFoundException {
+    public Invoice getInvoiceById(Long id) throws ResourceNotFoundException {
         return invoiceRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Invoice { id=" + id + " } not found"));
     }
 
@@ -39,7 +39,7 @@ public class InvoiceBusiness {
     }
 
     @Transactional
-    public Invoice updateInvoice(Integer id, Invoice invoice) throws ResourceNotFoundException {
+    public Invoice updateInvoice(Long id, Invoice invoice) throws ResourceNotFoundException {
         invoice.setId(id);
         if (!invoiceRepository.existsById(id)) {
             throw new ResourceNotFoundException("Invoice { id=" + id + " } not found");
@@ -48,7 +48,7 @@ public class InvoiceBusiness {
     }
 
     @Transactional
-    public void deleteInvoice(Integer id) throws ResourceNotFoundException {
+    public void deleteInvoice(Long id) throws ResourceNotFoundException {
         Invoice invoice = invoiceRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Invoice { id=" + id + " } not found"));
         invoiceRepository.delete(invoice);
     }

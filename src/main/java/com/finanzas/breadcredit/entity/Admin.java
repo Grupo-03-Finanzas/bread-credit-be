@@ -16,7 +16,7 @@ public class Admin {
 
     @Id
     @Column(name = "admin_id", nullable = false)
-    private Integer id;
+    private Long id;
 
     @MapsId
     @OneToOne(fetch = FetchType.LAZY, optional = false)

@@ -27,7 +27,7 @@ public class CreditaccountBusiness {
         this.adminRepository = adminRepository;
     }
 
-    public Creditaccount getCreditaccountById(Integer id) throws ResourceNotFoundException {
+    public Creditaccount getCreditaccountById(Long id) throws ResourceNotFoundException {
         Creditaccount creditaccount = creditaccountRepository.findById(id).orElse(null);
         if (creditaccount == null) {
             throw new ResourceNotFoundException("Credit account { id=" + id + " } not found");
@@ -57,7 +57,7 @@ public class CreditaccountBusiness {
         return creditaccountRepository.save(creditaccount);
     }
     @Transactional
-    public Creditaccount updateCreditaccount(Integer id, Creditaccount creditaccount) throws ResourceNotFoundException, ResourceConflictException {
+    public Creditaccount updateCreditaccount(Long id, Creditaccount creditaccount) throws ResourceNotFoundException, ResourceConflictException {
         creditaccount.setId(id);
         if (!creditaccountRepository.existsById(id)) {
             throw new ResourceNotFoundException("Credit account { id=" + id + " } not found");
@@ -78,7 +78,7 @@ public class CreditaccountBusiness {
     }
 
     @Transactional
-    public void deleteCreditaccount(Integer id) throws ResourceNotFoundException {
+    public void deleteCreditaccount(Long id) throws ResourceNotFoundException {
         Creditaccount creditaccount = creditaccountRepository.findById(id).orElse(null);
         if (creditaccount == null) {
             throw new ResourceNotFoundException("Credit account { id=" + id + " } not found");
@@ -86,7 +86,7 @@ public class CreditaccountBusiness {
         creditaccountRepository.delete(creditaccount);
     }
 
-    public List<Creditaccount> getCreditAccountsByAdminId(Integer id) throws ResourceNotFoundException {
+    public List<Creditaccount> getCreditAccountsByAdminId(Long id) throws ResourceNotFoundException {
         List<Creditaccount> creditaccountList = creditaccountRepository.findByAdmin_Id(id).orElse(new ArrayList<>());
         if (creditaccountList.isEmpty()) {
             throw new ResourceNotFoundException("Credit account list is empty");
@@ -94,7 +94,7 @@ public class CreditaccountBusiness {
         return creditaccountList;
     }
 
-    public Creditaccount getCreditaccountByAdmin_IdANDCustomer_Id(Integer adminId, Integer customerId) throws ResourceNotFoundException {
+    public Creditaccount getCreditaccountByAdmin_IdANDCustomer_Id(Long adminId, Long customerId) throws ResourceNotFoundException {
         Creditaccount creditaccount = creditaccountRepository.findByAdmin_IdAndCustomer_Id(adminId, customerId).orElse(null);
         if (creditaccount == null) {
             throw new ResourceNotFoundException("Credit account not found");
@@ -102,7 +102,7 @@ public class CreditaccountBusiness {
         return creditaccount;
     }
 
-    public Creditaccount getCreditaccountByCustomer_Id(Integer customerId) throws ResourceNotFoundException {
+    public Creditaccount getCreditaccountByCustomer_Id(Long customerId) throws ResourceNotFoundException {
         Creditaccount creditaccount = creditaccountRepository.findByCustomer_Id(customerId).orElse(null);
         if (creditaccount == null) {
             throw new ResourceNotFoundException("Credit account not found");

@@ -17,10 +17,9 @@ import java.math.BigDecimal;
 public class Creditaccount {
 
     @Id
-    @SequenceGenerator(name = "creditaccount_idcreditaccount_seq", sequenceName = "creditaccount_idcreditaccount_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "creditaccount_idcreditaccount_seq")
+    @GeneratedValue (strategy = GenerationType.IDENTITY)
     @Column(name = "creditaccount_id", nullable = false)
-    private Integer id;
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "customer_id", nullable = false)
@@ -36,36 +35,36 @@ public class Creditaccount {
     @Column(name = "current_credit", nullable = false, precision = 16, scale = 12)
     private BigDecimal currentCredit;
     @Column(name = "billing_day", nullable = false)
-    private Integer billingDay;
+    private Long billingDay;
     @Column(name = "credit_type_of_rate", nullable = false, length = 3)
     private String creditTypeOfRate;
     @Column(name = "credit_rate", nullable = false, precision = 16, scale = 12)
     private BigDecimal creditRate;
     @Column(name = "credit_compounding", nullable = false)
-    private Integer creditCompounding;
+    private Long creditCompounding;
     @Column(name = "invoice_penalty_rate_type", nullable = false, length = 3)
     private String invoicePenaltyRateType;
     @Column(name = "invoice_penalty_rate", nullable = false, precision = 16, scale = 12)
     private BigDecimal invoicePenaltyRate;
     @Column(name = "invoice_penalty_compouding", nullable = false)
-    private Integer invoicePenaltyCompouding;
+    private Long invoicePenaltyCompouding;
     @Column(name = "installment_penalty_rate_type", nullable = false, length = 3)
     private String installmentPenaltyRateType;
     @Column(name = "installment_penalty_rate", nullable = false, precision = 16, scale = 12)
     private BigDecimal installmentPenaltyRate;
     @Column(name = "installment_penalty_compouding", nullable = false)
-    private Integer installmentPenaltyCompouding;
+    private Long installmentPenaltyCompouding;
     @Column(name = "invoice_compensatory_rate_type", nullable = false, length = 3)
     private String invoiceCompensatoryRateType;
     @Column(name = "invoice_compensatory_rate", nullable = false, precision = 16, scale = 12)
     private BigDecimal invoiceCompensatoryRate;
     @Column(name = "invoice_compensatory_compouding", nullable = false)
-    private Integer invoiceCompensatoryCompouding;
+    private Long invoiceCompensatoryCompouding;
     @Column(name = "installment_compensatory_rate_type", nullable = false, length = 3)
     private String installmentCompensatoryRateType;
     @Column(name = "installment_compensatory_rate", nullable = false, precision = 16, scale = 12)
     private BigDecimal installmentCompensatoryRate;
     @Column(name = "installment_compensatory_compouding", nullable = false)
-    private Integer installmentCompensatoryCompouding;
+    private Long installmentCompensatoryCompouding;
 
 }

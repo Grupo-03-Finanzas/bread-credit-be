@@ -31,7 +31,7 @@ public class PurchaseBusiness {
         return purchaseRepository.save(purchase);
     }
 
-    public Purchase getPurchaseById(Integer id) throws ResourceNotFoundException {
+    public Purchase getPurchaseById(Long id) throws ResourceNotFoundException {
         return purchaseRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Purchase { id=" + id + " } not found"));
     }
@@ -44,7 +44,7 @@ public class PurchaseBusiness {
         return purchaseList;
     }
 
-    public Purchase updatePurchase(Integer id, Purchase purchase) throws ResourceNotFoundException {
+    public Purchase updatePurchase(Long id, Purchase purchase) throws ResourceNotFoundException {
         purchase.setId(id);
         if (!creditaccountRepository.existsById(purchase.getCreditaccount().getId())) {
             throw new ResourceNotFoundException("Credit account { id=" + purchase.getCreditaccount().getId() + " }  not found");
@@ -55,7 +55,7 @@ public class PurchaseBusiness {
         return purchaseRepository.save(purchase);
     }
 
-    public void deletePurchase(Integer id) throws ResourceNotFoundException {
+    public void deletePurchase(Long id) throws ResourceNotFoundException {
         if (!purchaseRepository.existsById(id)) {
             throw new ResourceNotFoundException("Purchase not found");
         }

@@ -18,10 +18,9 @@ import java.time.LocalDate;
 public class Installment {
 
     @Id
-    @SequenceGenerator(name = "installment_idinstallment_seq", sequenceName = "installment_idinstallment_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "installment_idinstallment_seq")
+    @GeneratedValue (strategy = GenerationType.IDENTITY)
     @Column(name = "installment_id", nullable = false)
-    private Integer id;
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "purchase_id", nullable = false)

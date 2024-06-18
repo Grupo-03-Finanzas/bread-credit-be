@@ -18,10 +18,9 @@ import java.time.Instant;
 public class Payment {
 
     @Id
-    @SequenceGenerator(name = "payment_idpayment_seq", sequenceName = "payment_idpayment_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "payment_idpayment_seq")
+    @GeneratedValue (strategy = GenerationType.IDENTITY)
     @Column(name = "payment_id", nullable = false)
-    private Integer id;
+    private Long id;
 
     @Column(name = "amount", nullable = false, precision = 16, scale = 12)
     private BigDecimal amount;

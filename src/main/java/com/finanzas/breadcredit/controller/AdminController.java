@@ -28,7 +28,7 @@ public class AdminController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public AdminDtoData getAdminById(@PathVariable Integer id) throws ResourceNotFoundException {
+    public AdminDtoData getAdminById(@PathVariable Long id) throws ResourceNotFoundException {
         Admin admin = adminBusiness.getAdminById(id);
         return UtilityDto.convertTo(admin, AdminDtoData.class);
     }
@@ -50,7 +50,7 @@ public class AdminController {
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public AdminDtoData updateAdmin(@PathVariable Integer id, @RequestBody AdminDtoInsert adminDtoInsert) throws ResourceNotFoundException, ResourceConflictException {
+    public AdminDtoData updateAdmin(@PathVariable Long id, @RequestBody AdminDtoInsert adminDtoInsert) throws ResourceNotFoundException, ResourceConflictException {
         Admin admin = UtilityDto.convertTo(adminDtoInsert, Admin.class);
         admin = adminBusiness.updateAdmin(id, admin);
         return UtilityDto.convertTo(admin, AdminDtoData.class);
@@ -58,7 +58,7 @@ public class AdminController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public Void deleteAdmin(@PathVariable Integer id) throws ResourceNotFoundException {
+    public Void deleteAdmin(@PathVariable Long id) throws ResourceNotFoundException {
         adminBusiness.deleteAdmin(id);
         return null;
     }

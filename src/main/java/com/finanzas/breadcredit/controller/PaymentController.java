@@ -25,7 +25,7 @@ public class PaymentController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public PaymentDtoData getPaymentById(@PathVariable Integer id) throws ResourceNotFoundException {
+    public PaymentDtoData getPaymentById(@PathVariable Long id) throws ResourceNotFoundException {
         Payment payment = paymentBusiness.getPaymentById(id);
         return UtilityDto.convertTo(payment, PaymentDtoData.class);
     }
@@ -47,7 +47,7 @@ public class PaymentController {
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public PaymentDtoData updatePayment(@PathVariable Integer id, @RequestBody PaymentDtoInsert paymentDtoInsert) throws ResourceNotFoundException {
+    public PaymentDtoData updatePayment(@PathVariable Long id, @RequestBody PaymentDtoInsert paymentDtoInsert) throws ResourceNotFoundException {
         Payment payment = UtilityDto.convertTo(paymentDtoInsert, Payment.class);
         payment = paymentBusiness.updatePayment(id, payment);
         return UtilityDto.convertTo(payment, PaymentDtoData.class);
@@ -55,7 +55,7 @@ public class PaymentController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public Void deletePayment(@PathVariable Integer id) throws ResourceNotFoundException {
+    public Void deletePayment(@PathVariable Long id) throws ResourceNotFoundException {
         paymentBusiness.deletePayment(id);
         return null;
     }

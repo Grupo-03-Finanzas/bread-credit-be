@@ -22,7 +22,7 @@ public class ProductBusiness {
         this.adminRepository = adminRepository;
     }
 
-    public Product getProductById(Integer id) throws ResourceNotFoundException {
+    public Product getProductById(Long id) throws ResourceNotFoundException {
         return productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
     }
@@ -44,7 +44,7 @@ public class ProductBusiness {
     }
 
     @Transactional
-    public Product updateProduct(Integer id, Product product) throws ResourceNotFoundException {
+    public Product updateProduct(Long id, Product product) throws ResourceNotFoundException {
         product.setId(id);
 
         if (!productRepository.existsById(id)) {
@@ -55,13 +55,13 @@ public class ProductBusiness {
     }
 
     @Transactional
-    public void deleteProduct(Integer id) throws ResourceNotFoundException {
+    public void deleteProduct(Long id) throws ResourceNotFoundException {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
         productRepository.delete(product);
     }
 
-    public List<Product> getProductByAdminId(Integer id) throws ResourceNotFoundException {
+    public List<Product> getProductByAdminId(Long id) throws ResourceNotFoundException {
         return productRepository.findByAdmin_Id(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Products not found for the given admin"));
     }

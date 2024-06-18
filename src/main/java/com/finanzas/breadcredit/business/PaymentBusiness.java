@@ -20,7 +20,7 @@ public class PaymentBusiness {
     public PaymentBusiness(PaymentRepository paymentRepository) {
         this.paymentRepository = paymentRepository;
     }
-    public Payment getPaymentById(Integer id) throws ResourceNotFoundException {
+    public Payment getPaymentById(Long id) throws ResourceNotFoundException {
         return paymentRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Payment { id=" + id + " } not found"));
     }
 
@@ -40,7 +40,7 @@ public class PaymentBusiness {
 
 
     @Transactional
-    public Payment updatePayment(Integer id, Payment payment) throws ResourceNotFoundException {
+    public Payment updatePayment(Long id, Payment payment) throws ResourceNotFoundException {
         payment.setId(id);
         if (!paymentRepository.existsById(id)) {
             throw new ResourceNotFoundException("Payment { id=" + id + " } not found");
@@ -49,7 +49,7 @@ public class PaymentBusiness {
     }
 
     @Transactional
-    public void deletePayment(Integer id) throws ResourceNotFoundException {
+    public void deletePayment(Long id) throws ResourceNotFoundException {
         Payment payment = paymentRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Payment { id=" + id + " } not found"));
         paymentRepository.delete(payment);
     }

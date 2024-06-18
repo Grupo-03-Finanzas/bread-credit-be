@@ -18,10 +18,9 @@ import java.time.LocalDate;
 public class Invoice {
 
     @Id
-    @SequenceGenerator(name = "invoice_idinvoice_seq", sequenceName = "invoice_idinvoice_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "invoice_idinvoice_seq")
+    @GeneratedValue (strategy = GenerationType.IDENTITY)
     @Column(name = "invoice_id", nullable = false)
-    private Integer id;
+    private Long id;
 
     @OneToOne
     @JoinColumn(name = "purchase_id", referencedColumnName = "purchase_id", nullable = false)

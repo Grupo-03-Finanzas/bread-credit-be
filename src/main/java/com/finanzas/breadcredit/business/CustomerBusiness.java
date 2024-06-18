@@ -24,7 +24,7 @@ public class CustomerBusiness {
         this.userRepository = userRepository;
     }
 
-    public Customer getCustomerById(Integer id) throws ResourceNotFoundException {
+    public Customer getCustomerById(Long id) throws ResourceNotFoundException {
         Customer customer = customerRepository.findById(id).orElse(null);
         if (customer == null) {
             throw new ResourceNotFoundException("Customer { id=" + id + " } not found");
@@ -54,7 +54,7 @@ public class CustomerBusiness {
     }
 
     @Transactional
-    public Customer updateCustomer(Integer id, Customer customer) throws ResourceNotFoundException, ResourceConflictException {
+    public Customer updateCustomer(Long id, Customer customer) throws ResourceNotFoundException, ResourceConflictException {
         customer.setId(id);
         customer.getUser().setId(id);
         Customer customerOld = getCustomerById(id);
@@ -73,7 +73,7 @@ public class CustomerBusiness {
     }
 
     @Transactional
-    public void deleteCustomer(Integer id) throws ResourceNotFoundException {
+    public void deleteCustomer(Long id) throws ResourceNotFoundException {
         Customer customer = getCustomerById(id);
         customerRepository.delete(customer);
         userRepository.delete(customer.getUser());

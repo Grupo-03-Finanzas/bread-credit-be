@@ -25,7 +25,7 @@ public class InstallmentBusiness {
         this.paymentRepository = paymentRepository;
     }
 
-    public Installment getInstallmentById(Integer id) throws ResourceNotFoundException {
+    public Installment getInstallmentById(Long id) throws ResourceNotFoundException {
         return installmentRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Installment { id=" + id + "} not found"));
     }
 
@@ -49,7 +49,7 @@ public class InstallmentBusiness {
     }
 
     @Transactional
-    public Installment updateInstallment(Integer id, Installment installment) throws ResourceNotFoundException {
+    public Installment updateInstallment(Long id, Installment installment) throws ResourceNotFoundException {
         installment.setId(id);
 
         if (!installmentRepository.existsById(id)) {
@@ -66,7 +66,7 @@ public class InstallmentBusiness {
     }
 
     @Transactional
-    public void deleteInstallment(Integer id) throws ResourceNotFoundException {
+    public void deleteInstallment(Long id) throws ResourceNotFoundException {
         Installment installment = installmentRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Installment { id=" + id + "} not found"));
         installmentRepository.delete(installment);
     }

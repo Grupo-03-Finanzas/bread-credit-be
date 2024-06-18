@@ -28,7 +28,7 @@ public class CustomerController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public CustomerDtoData getCustomerById(@PathVariable Integer id) throws ResourceNotFoundException {
+    public CustomerDtoData getCustomerById(@PathVariable Long id) throws ResourceNotFoundException {
         Customer customer = customerBusiness.getCustomerById(id);
         return UtilityDto.convertTo(customer, CustomerDtoData.class);
     }
@@ -50,7 +50,7 @@ public class CustomerController {
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public CustomerDtoData updateCustomer(@PathVariable Integer id, @RequestBody CustomerDtoInsert customerDtoInsert) throws ResourceNotFoundException, ResourceConflictException {
+    public CustomerDtoData updateCustomer(@PathVariable Long id, @RequestBody CustomerDtoInsert customerDtoInsert) throws ResourceNotFoundException, ResourceConflictException {
         Customer customer = UtilityDto.convertTo(customerDtoInsert, Customer.class);
         customer = customerBusiness.updateCustomer(id, customer);
         return UtilityDto.convertTo(customer, CustomerDtoData.class);
@@ -58,7 +58,7 @@ public class CustomerController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public Void delete(@PathVariable Integer id) throws ResourceNotFoundException {
+    public Void delete(@PathVariable Long id) throws ResourceNotFoundException {
         customerBusiness.deleteCustomer(id);
         return null;
     }

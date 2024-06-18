@@ -26,7 +26,7 @@ public class CreditaccountController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public CreditaccountDtoData getCreditaccountById(@PathVariable Integer id) throws ResourceNotFoundException {
+    public CreditaccountDtoData getCreditaccountById(@PathVariable Long id) throws ResourceNotFoundException {
         Creditaccount creditaccount = creditaccountBusiness.getCreditaccountById(id);
         return UtilityDto.convertTo(creditaccount, CreditaccountDtoData.class);
     }
@@ -48,7 +48,7 @@ public class CreditaccountController {
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public CreditaccountDtoData updateCreditaccount(@PathVariable Integer id, @RequestBody CreditaccountDtoInsert creditaccountDtoInsert) throws ResourceNotFoundException, ResourceConflictException {
+    public CreditaccountDtoData updateCreditaccount(@PathVariable Long id, @RequestBody CreditaccountDtoInsert creditaccountDtoInsert) throws ResourceNotFoundException, ResourceConflictException {
         Creditaccount creditaccount = UtilityDto.convertTo(creditaccountDtoInsert, Creditaccount.class);
         creditaccount = creditaccountBusiness.updateCreditaccount(id, creditaccount);
         return UtilityDto.convertTo(creditaccount, CreditaccountDtoData.class);
@@ -56,28 +56,28 @@ public class CreditaccountController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public Void delete(@PathVariable Integer id) throws ResourceNotFoundException {
+    public Void delete(@PathVariable Long id) throws ResourceNotFoundException {
         creditaccountBusiness.deleteCreditaccount(id);
         return null;
     }
 
     @GetMapping("/admin/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public List<CreditaccountDtoData> getCreditaccountsByAdminId(@PathVariable Integer id) throws ResourceNotFoundException {
+    public List<CreditaccountDtoData> getCreditaccountsByAdminId(@PathVariable Long id) throws ResourceNotFoundException {
         List<Creditaccount> listCreditaccounts = creditaccountBusiness.getCreditAccountsByAdminId(id);
         return UtilityDto.convertToList(listCreditaccounts, CreditaccountDtoData.class);
     }
 
     @GetMapping("/admin/{adminId}/customer/{customerId}")
     @ResponseStatus(HttpStatus.OK)
-    public CreditaccountDtoData getCreditaccountByAdminIdANDCustomerId(@PathVariable Integer adminId, @PathVariable Integer customerId) throws ResourceNotFoundException {
+    public CreditaccountDtoData getCreditaccountByAdminIdANDCustomerId(@PathVariable Long adminId, @PathVariable Long customerId) throws ResourceNotFoundException {
         Creditaccount creditaccount = creditaccountBusiness.getCreditaccountByAdmin_IdANDCustomer_Id(adminId, customerId);
         return UtilityDto.convertTo(creditaccount, CreditaccountDtoData.class);
     }
 
     @GetMapping("/customer/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public CreditaccountDtoData getCreditaccountByAdminId(@PathVariable Integer id) throws ResourceNotFoundException {
+    public CreditaccountDtoData getCreditaccountByAdminId(@PathVariable Long id) throws ResourceNotFoundException {
         Creditaccount creditaccount = creditaccountBusiness.getCreditaccountByCustomer_Id(id);
         return UtilityDto.convertTo(creditaccount, CreditaccountDtoData.class);
     }

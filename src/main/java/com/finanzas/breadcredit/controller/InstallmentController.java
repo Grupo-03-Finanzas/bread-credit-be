@@ -25,7 +25,7 @@ public class InstallmentController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public InstallmentDtoData getInstallmentById(@PathVariable Integer id) throws ResourceNotFoundException {
+    public InstallmentDtoData getInstallmentById(@PathVariable Long id) throws ResourceNotFoundException {
         Installment installment = installmentBusiness.getInstallmentById(id);
         return UtilityDto.convertTo(installment, InstallmentDtoData.class);
     }
@@ -47,7 +47,7 @@ public class InstallmentController {
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public InstallmentDtoData updateInstallment(@PathVariable Integer id, @RequestBody InstallmentDtoInsert installmentDtoInsert) throws ResourceNotFoundException {
+    public InstallmentDtoData updateInstallment(@PathVariable Long id, @RequestBody InstallmentDtoInsert installmentDtoInsert) throws ResourceNotFoundException {
         Installment installment = UtilityDto.convertTo(installmentDtoInsert, Installment.class);
         installment = installmentBusiness.updateInstallment(id, installment);
         return UtilityDto.convertTo(installment, InstallmentDtoData.class);
@@ -55,7 +55,7 @@ public class InstallmentController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public Void deleteInstallment(@PathVariable Integer id) throws ResourceNotFoundException {
+    public Void deleteInstallment(@PathVariable Long id) throws ResourceNotFoundException {
         installmentBusiness.deleteInstallment(id);
         return null;
     }

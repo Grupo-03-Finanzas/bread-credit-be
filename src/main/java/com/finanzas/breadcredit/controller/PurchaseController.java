@@ -32,7 +32,7 @@ public class PurchaseController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public PurchaseDtoData getPurchaseById(@PathVariable Integer id) {
+    public PurchaseDtoData getPurchaseById(@PathVariable Long id) {
         Purchase purchase = purchaseBusiness.getPurchaseById(id);
         return UtilityDto.convertTo(purchase, PurchaseDtoData.class);
     }
@@ -46,7 +46,7 @@ public class PurchaseController {
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public PurchaseDtoData updatePurchase(@PathVariable Integer id, @RequestBody PurchaseDtoInsert purchaseDtoInsert) {
+    public PurchaseDtoData updatePurchase(@PathVariable Long id, @RequestBody PurchaseDtoInsert purchaseDtoInsert) {
         Purchase purchase = UtilityDto.convertTo(purchaseDtoInsert, Purchase.class);
         purchase = purchaseBusiness.updatePurchase(id, purchase);
         return UtilityDto.convertTo(purchase, PurchaseDtoData.class);
@@ -54,7 +54,7 @@ public class PurchaseController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public Void deletePurchase(@PathVariable Integer id) {
+    public Void deletePurchase(@PathVariable Long id) {
         purchaseBusiness.deletePurchase(id);
         return null;
     }

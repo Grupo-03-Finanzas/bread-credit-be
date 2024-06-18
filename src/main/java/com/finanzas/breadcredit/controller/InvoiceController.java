@@ -25,7 +25,7 @@ public class InvoiceController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public InvoiceDtoData getInvoiceById(@PathVariable Integer id) throws ResourceNotFoundException {
+    public InvoiceDtoData getInvoiceById(@PathVariable Long id) throws ResourceNotFoundException {
         Invoice invoice = invoiceBusiness.getInvoiceById(id);
         return UtilityDto.convertTo(invoice, InvoiceDtoData.class);
     }
@@ -47,7 +47,7 @@ public class InvoiceController {
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public InvoiceDtoData updateInvoice(@PathVariable Integer id, @RequestBody InvoiceDtoInsert invoiceDtoInsert) throws ResourceNotFoundException {
+    public InvoiceDtoData updateInvoice(@PathVariable Long id, @RequestBody InvoiceDtoInsert invoiceDtoInsert) throws ResourceNotFoundException {
         Invoice invoice = UtilityDto.convertTo(invoiceDtoInsert, Invoice.class);
         invoice = invoiceBusiness.updateInvoice(id, invoice);
         return UtilityDto.convertTo(invoice, InvoiceDtoData.class);
@@ -55,7 +55,7 @@ public class InvoiceController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public Void deleteInvoice(@PathVariable Integer id) throws ResourceNotFoundException {
+    public Void deleteInvoice(@PathVariable Long id) throws ResourceNotFoundException {
         invoiceBusiness.deleteInvoice(id);
         return null;
     }

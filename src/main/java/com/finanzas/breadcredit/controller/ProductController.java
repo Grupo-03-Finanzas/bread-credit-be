@@ -25,7 +25,7 @@ public class ProductController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ProductDtoData getProductById(@PathVariable Integer id) throws ResourceNotFoundException {
+    public ProductDtoData getProductById(@PathVariable Long id) throws ResourceNotFoundException {
         Product product = productBusiness.getProductById(id);
         return UtilityDto.convertTo(product, ProductDtoData.class);
     }
@@ -47,7 +47,7 @@ public class ProductController {
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ProductDtoData updateProduct(@PathVariable Integer id, @RequestBody ProductDtoInsert productDtoInsert) throws ResourceNotFoundException {
+    public ProductDtoData updateProduct(@PathVariable Long id, @RequestBody ProductDtoInsert productDtoInsert) throws ResourceNotFoundException {
         Product product = UtilityDto.convertTo(productDtoInsert, Product.class);
         product = productBusiness.updateProduct(id, product);
         return UtilityDto.convertTo(product, ProductDtoData.class);
@@ -55,13 +55,13 @@ public class ProductController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteProduct(@PathVariable Integer id) throws ResourceNotFoundException {
+    public void deleteProduct(@PathVariable Long id) throws ResourceNotFoundException {
         productBusiness.deleteProduct(id);
     }
 
     @GetMapping("/admin/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public List<ProductDtoData> getProductsByAdminId(@PathVariable Integer id) throws ResourceNotFoundException {
+    public List<ProductDtoData> getProductsByAdminId(@PathVariable Long id) throws ResourceNotFoundException {
         List<Product> listProducts = productBusiness.getProductByAdminId(id);
         return UtilityDto.convertToList(listProducts, ProductDtoData.class);
     }

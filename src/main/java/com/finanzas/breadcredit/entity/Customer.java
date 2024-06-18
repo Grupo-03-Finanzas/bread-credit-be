@@ -16,10 +16,10 @@ public class Customer {
 
     @Id
     @Column(name = "customer_id", nullable = false)
-    private Integer id;
+    private Long id;
 
     @MapsId
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, optional = false)
     @JoinColumn(name = "customer_id", nullable = false)
     private User user;
 

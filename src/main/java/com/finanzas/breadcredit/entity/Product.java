@@ -17,10 +17,9 @@ import java.math.BigDecimal;
 public class Product {
 
     @Id
-    @SequenceGenerator(name = "product_idproduct_seq", sequenceName = "product_idproduct_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "product_idproduct_seq")
+    @GeneratedValue (strategy = GenerationType.IDENTITY)
     @Column(name = "product_id", nullable = false)
-    private Integer id;
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "admin_id", nullable = false)
