@@ -23,6 +23,9 @@ public class Invoice {
     @Column(name = "invoice_id", nullable = false)
     private Integer id;
 
+    @OneToOne
+    @JoinColumn(name = "purchase_id", referencedColumnName = "purchase_id", nullable = false)
+    private Purchase purchase;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "payment_id")
     private Payment payment;

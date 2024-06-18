@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -26,6 +27,10 @@ public class Purchase {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "creditaccount_id", nullable = false)
     private Creditaccount creditaccount;
+    @OneToMany(mappedBy = "purchase", cascade = CascadeType.ALL)
+    private Set<Installment> installments;
+    @OneToOne(mappedBy = "purchase", cascade = CascadeType.ALL, optional = false)
+    private Invoice invoice;
 
     @Column(name = "initial_cost", nullable = false, precision = 16, scale = 2)
     private BigDecimal initialCost;
