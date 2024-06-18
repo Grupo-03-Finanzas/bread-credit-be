@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -22,9 +23,8 @@ public class Invoice {
     @Column(name = "invoice_id", nullable = false)
     private Long id;
 
-    @OneToOne
-    @JoinColumn(name = "purchase_id", referencedColumnName = "purchase_id", nullable = false)
-    private Purchase purchase;
+    @OneToMany(mappedBy = "invoice")
+    private Set<Purchase> purchases;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "payment_id")
     private Payment payment;

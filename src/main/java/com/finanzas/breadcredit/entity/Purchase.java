@@ -28,7 +28,8 @@ public class Purchase {
     private Creditaccount creditaccount;
     @OneToMany(mappedBy = "purchase", cascade = CascadeType.ALL)
     private Set<Installment> installments;
-    @OneToOne(mappedBy = "purchase", cascade = CascadeType.ALL, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "invoice_id")
     private Invoice invoice;
 
     @Column(name = "initial_cost", nullable = false, precision = 16, scale = 2)
