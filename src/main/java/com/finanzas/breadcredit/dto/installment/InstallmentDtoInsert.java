@@ -17,7 +17,6 @@ import java.time.LocalDate;
 public class InstallmentDtoInsert implements Serializable {
     private Long id;
     private PurchaseDto purchase;
-    private PaymentDto payment;
     private LocalDate dueDate;
     private BigDecimal amount;
 
@@ -28,16 +27,6 @@ public class InstallmentDtoInsert implements Serializable {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class PurchaseDto implements Serializable {
-        private Long id;
-    }
-
-    /**
-     * DTO for {@link com.finanzas.breadcredit.entity.Payment}
-     */
-    @Data
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class PaymentDto implements Serializable {
         private Long id;
     }
 }

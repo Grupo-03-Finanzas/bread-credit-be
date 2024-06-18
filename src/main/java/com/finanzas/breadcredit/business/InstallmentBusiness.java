@@ -39,11 +39,9 @@ public class InstallmentBusiness {
 
     public Installment insertInstallment(Installment installment) throws ResourceNotFoundException {
         installment.setId(null);
+        installment.setPayment(null);
         if (!purchaseRepository.existsById(installment.getPurchase().getId())) {
             throw new ResourceNotFoundException("Purchase { id=" + installment.getPurchase().getId() + "} not found");
-        }
-        if (!paymentRepository.existsById(installment.getPayment().getId())) {
-            throw new ResourceNotFoundException("Payment { id=" + installment.getPayment().getId() + "} not found");
         }
         return installmentRepository.save(installment);
     }
