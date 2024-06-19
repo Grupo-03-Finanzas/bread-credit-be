@@ -65,7 +65,7 @@ public class InvoiceBusiness {
     }
 
     public List<Invoice> generateInvoices() {
-        ZonedDateTime startOfMonthZoned = LocalDate.now().withDayOfMonth(1).atStartOfDay(ZoneId.systemDefault());
+        ZonedDateTime startOfMonthZoned = LocalDate.now().minusMonths(1).withDayOfMonth(1).atStartOfDay(ZoneId.systemDefault());
         List<Purchase> purchases = purchaseRepository.findPurchasesWithoutInstallmentsAndNoInvoice(startOfMonthZoned.toInstant());
         List<InvoiceDtoInsert.PurchaseDto> purchaseDtoInserts = UtilityDto.convertToList(purchases, InvoiceDtoInsert.PurchaseDto.class);
 
@@ -84,15 +84,15 @@ public class InvoiceBusiness {
             Invoice invoice = new Invoice();
             invoice.setPurchases(purchaseSet);
             invoice.setAmount(totalAmount);
-            invoice.setDueDate(LocalDate.now());
+            invoice.setDueDate(LocalDate.now().plusDays(9)); // debido a que se ejecuta el día 1 (+ 9 = 10)
             invoices.add(invoice);
             insertInvoice(invoice);
         }
         return invoices;
     }
 
-    //last day of month 23:55
-    @Scheduled(cron = "0 55 23 L * ?")
+    //
+    @Scheduled(cron = "0 0 0 1 * ?")
     public void generateInvoicesScheduled() {
         generateInvoices();
     }
