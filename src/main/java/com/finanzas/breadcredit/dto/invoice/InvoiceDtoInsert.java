@@ -29,5 +29,17 @@ public class InvoiceDtoInsert implements Serializable {
     @NoArgsConstructor
     public static class PurchaseDto implements Serializable {
         private Long id;
+        private CreditaccountDto creditaccount;
+        private BigDecimal initialCost;
+
+        /**
+         * DTO for {@link com.finanzas.breadcredit.entity.Creditaccount}
+         */
+        @Data
+        @AllArgsConstructor
+        @NoArgsConstructor
+        public static class CreditaccountDto implements Serializable {
+            private Long id;
+        }
     }
 }

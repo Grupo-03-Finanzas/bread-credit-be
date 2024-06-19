@@ -59,4 +59,11 @@ public class InvoiceController {
         invoiceBusiness.deleteInvoice(id);
         return null;
     }
+
+    @PostMapping("/generate")
+    @ResponseStatus(HttpStatus.CREATED)
+    public List<InvoiceDtoInsert> generateInvoice() {
+        return UtilityDto.convertToList(invoiceBusiness.generateInvoices(), InvoiceDtoInsert.class);
+    }
+
 }
