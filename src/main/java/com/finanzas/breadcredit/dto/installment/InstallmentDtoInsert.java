@@ -17,6 +17,7 @@ import java.time.LocalDate;
 public class InstallmentDtoInsert implements Serializable {
     private Long id;
     private PurchaseDto purchase;
+    private Long installmentNumber;
     private LocalDate dueDate;
     private BigDecimal amount;
 
