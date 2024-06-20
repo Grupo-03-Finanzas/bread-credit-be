@@ -3,7 +3,9 @@ package com.finanzas.breadcredit.controller;
 import com.finanzas.breadcredit.business.PurchaseBusiness;
 import com.finanzas.breadcredit.dto.purchase.PurchaseDtoData;
 import com.finanzas.breadcredit.dto.purchase.PurchaseDtoInsert;
+import com.finanzas.breadcredit.dto.purchase.PurchaseDtoToPayAdmin;
 import com.finanzas.breadcredit.entity.Purchase;
+import com.finanzas.breadcredit.exception.ResourceNotFoundException;
 import com.finanzas.breadcredit.utility.UtilityDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,6 +22,7 @@ public class PurchaseController {
     @Autowired
     public PurchaseController(PurchaseBusiness purchaseBusiness) {
         this.purchaseBusiness = purchaseBusiness;
+
     }
 
     @PostMapping("")
@@ -57,5 +60,11 @@ public class PurchaseController {
     public Void deletePurchase(@PathVariable Long id) {
         purchaseBusiness.deletePurchase(id);
         return null;
+    }
+
+    @GetMapping("/topay/admin/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public List<PurchaseDtoToPayAdmin> listPurchasesToPayAdmin(@PathVariable Long id) throws ResourceNotFoundException {
+        return purchaseBusiness.listPurchasesToPayAdmin(id);
     }
 }
