@@ -67,4 +67,10 @@ public class PurchaseController {
     public List<PurchaseDtoToPayAdmin> listPurchasesToPayAdmin(@PathVariable Long id) throws ResourceNotFoundException {
         return purchaseBusiness.listPurchasesToPayAdmin(id);
     }
+
+    @GetMapping("/topay/admin/{id}/search/{search}")
+    @ResponseStatus(HttpStatus.OK)
+    public List<PurchaseDtoToPayAdmin> listPurchasesToPayAdminSearch(@PathVariable Long id, @PathVariable String search) throws ResourceNotFoundException {
+        return purchaseBusiness.listPurchasesToPayAdminSearch(id, search);
+    }
 }

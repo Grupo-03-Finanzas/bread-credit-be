@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class PurchaseBusiness {
@@ -98,6 +99,15 @@ public class PurchaseBusiness {
         }
 
         return dtos;
+    }
+
+    public List<PurchaseDtoToPayAdmin> listPurchasesToPayAdminSearch(Long id, String search) throws ResourceNotFoundException {
+        List<PurchaseDtoToPayAdmin> purchaseDtoToPayAdminList = listPurchasesToPayAdmin(id);
+        return purchaseDtoToPayAdminList.stream()
+                .filter(purchase ->
+                        purchase.getDni().toLowerCase().contains(search.toLowerCase()) ||
+                                purchase.getFullname().toLowerCase().contains(search.toLowerCase()))
+                .collect(Collectors.toList());
     }
 
 }
