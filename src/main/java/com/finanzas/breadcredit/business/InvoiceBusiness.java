@@ -8,6 +8,7 @@ import com.finanzas.breadcredit.exception.ResourceNotFoundException;
 import com.finanzas.breadcredit.repository.InvoiceRepository;
 import com.finanzas.breadcredit.repository.PurchaseRepository;
 import com.finanzas.breadcredit.utility.UtilityDto;
+import com.finanzas.breadcredit.utility.UtilityFinance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -79,19 +80,32 @@ public class InvoiceBusiness {
 
         for (Map.Entry<Long, List<InvoiceDtoInsert.PurchaseDto>> entry : groupedPurchases.entrySet()) {
             Set<Purchase> purchaseSet = new HashSet<>(UtilityDto.convertToList(entry.getValue(), Purchase.class));
-            BigDecimal totalAmount = purchaseSet.stream().map(Purchase::getInitialCost).reduce(BigDecimal.ZERO, BigDecimal::add);
 
+            for (Purchase purchase : purchaseSet) {
+                BigDecimal presentValue = purchase.getInitialCost();
+                String creditType = purchase.getCreditRateType();
+                BigDecimal rate = purchase.getCreditRate();
+                Long compounding = purchase.getCreditCompouding();
+                Date purchaseDate = Date.from(purchase.getTime());
+                Date currentDate = new Date();
+                BigDecimal finalCost = UtilityFinance.calcFutureValue(presentValue, creditType, rate, purchaseDate, currentDate, compounding);
+                purchase.setFinalCost(finalCost);
+                purchaseRepository.save(purchase);
+            }
+            BigDecimal totalAmount = purchaseSet.stream().map(Purchase::getFinalCost).reduce(BigDecimal.ZERO, BigDecimal::add);
             Invoice invoice = new Invoice();
             invoice.setPurchases(purchaseSet);
             invoice.setAmount(totalAmount);
             invoice.setDueDate(LocalDate.now().plusDays(9)); // debido a que se ejecuta el día 1 (+ 9 = 10)
             invoices.add(invoice);
-            insertInvoice(invoice);
+            Invoice invoiceToPurchase = insertInvoice(invoice);
+            for (Purchase purchase : purchaseSet) {
+                purchase.setInvoice(invoiceToPurchase);
+                purchaseRepository.save(purchase);
+            }
         }
         return invoices;
     }
-
-    //
     @Scheduled(cron = "0 0 0 1 * ?")
     public void generateInvoicesScheduled() {
         generateInvoices();

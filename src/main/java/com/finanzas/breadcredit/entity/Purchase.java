@@ -28,12 +28,14 @@ public class Purchase {
     private Creditaccount creditaccount;
     @OneToMany(mappedBy = "purchase", cascade = CascadeType.ALL)
     private Set<Installment> installments;
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invoice_id")
     private Invoice invoice;
 
     @Column(name = "initial_cost", nullable = false, precision = 16, scale = 2)
     private BigDecimal initialCost;
+    @Column(name = "final_cost", precision = 16, scale = 2)
+    private BigDecimal finalCost;
     @Column(name = "\"time\"", nullable = false)
     private Instant time;
     @Column(name = "installment_number", nullable = false)
