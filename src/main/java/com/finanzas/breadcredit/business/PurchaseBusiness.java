@@ -95,7 +95,7 @@ public class PurchaseBusiness {
 
         for (Installment installment : installments) {
             PurchaseDtoToPayAdmin dto = new PurchaseDtoToPayAdmin();
-            dto.setInitialCost(installment.getAmount());
+            dto.setInitialCost(installment.getPurchase().getInitialCost().divide(BigDecimal.valueOf(installment.getPurchase().getInstallmentNumber())));
             dto.setDueDate(installment.getDueDate());
             dto.setTime(installment.getPurchase().getTime());
             dto.setDni(installment.getPurchase().getCreditaccount().getCustomer().getUser().getDni());
@@ -170,7 +170,7 @@ public class PurchaseBusiness {
             }
             dto.setDescription(descriptionBuilder.toString());
 
-            dto.setInitialCost(installment.getAmount());
+            dto.setInitialCost(installment.getPurchase().getInitialCost().divide(BigDecimal.valueOf(installment.getPurchase().getInstallmentNumber())));
             dto.setInstallmentNumber(installment.getInstallmentNumber());
             dto.setDueDate(installment.getDueDate());
             dto.setTime(installment.getPurchase().getTime());
