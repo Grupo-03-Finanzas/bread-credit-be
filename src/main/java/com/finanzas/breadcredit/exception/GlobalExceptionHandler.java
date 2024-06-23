@@ -26,10 +26,10 @@ public class GlobalExceptionHandler {
         return new ErrorResponse(HttpStatus.UNAUTHORIZED, ex);
     }
 
-    @ExceptionHandler(Exception.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    ErrorResponse unexpectedException(Exception ex) {
-        return new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, ex);
-    }
+    //@ExceptionHandler(Exception.class)
+    //@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    //ErrorResponse unexpectedException(Exception ex) {
+    //    return new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, ex);
+    //}
 
 }
