@@ -1,6 +1,7 @@
 package com.finanzas.breadcredit.business;
 
 import com.finanzas.breadcredit.dto.purchase.PurchaseDtoToPayAdmin;
+import com.finanzas.breadcredit.entity.Creditaccount;
 import com.finanzas.breadcredit.entity.Installment;
 import com.finanzas.breadcredit.entity.Invoice;
 import com.finanzas.breadcredit.entity.Purchase;
@@ -10,9 +11,11 @@ import com.finanzas.breadcredit.repository.InstallmentRepository;
 import com.finanzas.breadcredit.repository.InvoiceRepository;
 import com.finanzas.breadcredit.repository.PurchaseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -108,6 +111,31 @@ public class PurchaseBusiness {
                         purchase.getDni().toLowerCase().contains(search.toLowerCase()) ||
                                 purchase.getFullname().toLowerCase().contains(search.toLowerCase()))
                 .collect(Collectors.toList());
+    }
+
+    @Scheduled(cron = "0 0 0 * * *")
+    public void checkDueDates(){
+        List<Invoice> invoiceList = invoiceRepository.findAll();
+        List<Installment> installmentList = installmentRepository.findAll();
+
+        for (Invoice invoice : invoiceList) {
+            if (invoice.getDueDate().isBefore(LocalDate.now())) {
+                Creditaccount creditaccount = invoice.getPurchases().stream()
+                        .findFirst()
+                        .orElseThrow()
+                        .getCreditaccount();
+                creditaccount.setActive(false);
+                creditaccountRepository.save(creditaccount);
+            }
+        }
+
+        for (Installment installment : installmentList) {
+            if (installment.getDueDate().isBefore(LocalDate.now())) {
+                Creditaccount creditaccount = installment.getPurchase().getCreditaccount();
+                creditaccount.setActive(false);
+                creditaccountRepository.save(creditaccount);
+            }
+        }
     }
 
 }
