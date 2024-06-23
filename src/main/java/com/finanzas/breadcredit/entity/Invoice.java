@@ -23,7 +23,7 @@ public class Invoice {
     @Column(name = "invoice_id", nullable = false)
     private Long id;
 
-    @OneToMany(mappedBy = "invoice")
+    @OneToMany(mappedBy = "invoice", fetch = FetchType.EAGER)
     private Set<Purchase> purchases;
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "payment_id")

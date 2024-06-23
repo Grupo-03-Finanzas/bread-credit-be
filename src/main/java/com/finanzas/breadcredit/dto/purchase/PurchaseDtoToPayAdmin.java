@@ -13,9 +13,12 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PurchaseDtoToPayAdmin implements Serializable {
+    private Long installmentId;
+    private Long invoiceId;
     private String dni;
-    private String fullname;
-    private BigDecimal amount;
+    private String fullName;
+    private BigDecimal initialCost;
+    private BigDecimal finalCost;
     private Long installmentNumber;
     private LocalDate dueDate;
     private Instant time;

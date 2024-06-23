@@ -10,14 +10,20 @@ import com.finanzas.breadcredit.repository.CreditaccountRepository;
 import com.finanzas.breadcredit.repository.InstallmentRepository;
 import com.finanzas.breadcredit.repository.InvoiceRepository;
 import com.finanzas.breadcredit.repository.PurchaseRepository;
+import com.finanzas.breadcredit.utility.UtilityFinance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -83,59 +89,110 @@ public class PurchaseBusiness {
             Purchase firstPurchase = invoice.getPurchases().iterator().next();
             PurchaseDtoToPayAdmin dto = new PurchaseDtoToPayAdmin();
             dto.setDni(firstPurchase.getCreditaccount().getCustomer().getUser().getDni());
-            dto.setFullname(firstPurchase.getCreditaccount().getCustomer().getUser().getFirstName() + " " + firstPurchase.getCreditaccount().getCustomer().getUser().getLastName());
-            dto.setAmount(invoice.getAmount());
+            dto.setFullName(firstPurchase.getCreditaccount().getCustomer().getUser().getFirstName() + " " + firstPurchase.getCreditaccount().getCustomer().getUser().getLastName());
+            dto.setInitialCost(invoice.getAmount());
             dto.setDueDate(invoice.getDueDate());
             dto.setTime(firstPurchase.getTime());
+            dto.setFinalCost(calculateRealFinalCost(invoice));
+            dto.setInvoiceId(invoice.getId());
             dtos.add(dto);
         }
 
         for (Installment installment : installments) {
             PurchaseDtoToPayAdmin dto = new PurchaseDtoToPayAdmin();
             dto.setDni(installment.getPurchase().getCreditaccount().getCustomer().getUser().getDni());
-            dto.setFullname(installment.getPurchase().getCreditaccount().getCustomer().getUser().getFirstName() + " " + installment.getPurchase().getCreditaccount().getCustomer().getUser().getLastName());
-            dto.setAmount(installment.getAmount());
+            dto.setFullName(installment.getPurchase().getCreditaccount().getCustomer().getUser().getFirstName() + " " + installment.getPurchase().getCreditaccount().getCustomer().getUser().getLastName());
+            dto.setInitialCost(installment.getAmount());
             dto.setInstallmentNumber(installment.getInstallmentNumber());
             dto.setDueDate(installment.getDueDate());
             dto.setTime(installment.getPurchase().getTime());
+
+            Purchase purchase = installment.getPurchase();
+            BigDecimal finalCost = purchase.getFinalCost();
+            String creditType = purchase.getCompensatoryRateType();
+            BigDecimal rate = purchase.getCompensatoryRate();
+            Long compounding = purchase.getCompensatoryCompouding();
+            Date dueDate = Date.from(installment.getDueDate().atStartOfDay(ZoneId.systemDefault()).toInstant());
+            Date currentDate = new Date();
+            BigDecimal realFinalCost = UtilityFinance.calcFutureValue(finalCost, creditType, rate, dueDate, currentDate, compounding);
+            String creditType2 = purchase.getPenaltyRateType();
+            BigDecimal rate2 = purchase.getPenaltyRate();
+            Long compounding2 = purchase.getPenaltyCompouding();
+            realFinalCost = UtilityFinance.calcFutureValue(realFinalCost, creditType2, rate2, dueDate, currentDate, compounding2);
+            dto.setFinalCost(realFinalCost);
+            dto.setInstallmentId(installment.getId());
             dtos.add(dto);
         }
 
         return dtos;
     }
 
-    public List<PurchaseDtoToPayAdmin> listPurchasesToPayAdminSearch(Long id, String search) throws ResourceNotFoundException {
-        List<PurchaseDtoToPayAdmin> purchaseDtoToPayAdminList = listPurchasesToPayAdmin(id);
-        return purchaseDtoToPayAdminList.stream()
-                .filter(purchase ->
-                        purchase.getDni().toLowerCase().contains(search.toLowerCase()) ||
-                                purchase.getFullname().toLowerCase().contains(search.toLowerCase()))
-                .collect(Collectors.toList());
+    private BigDecimal calculateRealFinalCost(Invoice invoice) {
+        BigDecimal totalAmount = BigDecimal.ZERO;
+        for (Purchase purchase : invoice.getPurchases()) {
+            BigDecimal finalCost = purchase.getFinalCost();
+            String creditType = purchase.getCompensatoryRateType();
+            BigDecimal rate = purchase.getCompensatoryRate();
+            Long compounding = purchase.getCompensatoryCompouding();
+            Date dueDate = Date.from(invoice.getDueDate().atStartOfDay(ZoneId.systemDefault()).toInstant());
+            Date currentDate = new Date();
+            BigDecimal realFinalCost = UtilityFinance.calcFutureValue(finalCost, creditType, rate, dueDate, currentDate, compounding);
+            String creditType2 = purchase.getPenaltyRateType();
+            BigDecimal rate2 = purchase.getPenaltyRate();
+            Long compounding2 = purchase.getPenaltyCompouding();
+            realFinalCost = UtilityFinance.calcFutureValue(realFinalCost, creditType2, rate2, dueDate, currentDate, compounding2);
+            totalAmount = totalAmount.add(realFinalCost);
+        }
+        return totalAmount;
     }
 
+    public List<PurchaseDtoToPayAdmin> listPurchasesToPayAdminSearch(Long id, String search) throws ResourceNotFoundException {
+        List<PurchaseDtoToPayAdmin> purchaseDtoToPayAdminList = listPurchasesToPayAdmin(id);
+        return purchaseDtoToPayAdminList.stream().filter(purchase -> purchase.getDni().toLowerCase().contains(search.toLowerCase()) || purchase.getFullName().toLowerCase().contains(search.toLowerCase())).collect(Collectors.toList());
+    }
+
+    @Transactional
+    public List<Creditaccount> checkDueDates() {
+        List<Invoice> invoices = invoiceRepository.findAll();
+        List<Installment> installments = installmentRepository.findAll();
+
+        List<Creditaccount> creditaccountList = new ArrayList<>();
+
+        for (Invoice invoice : invoices) {
+            if (invoice.getDueDate().isBefore(LocalDate.now()) && invoice.getPayment() == null) {
+                Set<Purchase> purchases = invoice.getPurchases();
+                if (purchases == null || purchases.isEmpty()) {
+                    continue;
+                }
+                Long creditaccountId = purchases.stream().findFirst().orElse(null).getCreditaccount().getId();
+                Creditaccount creditaccount = creditaccountRepository.findById(creditaccountId).orElse(null);
+                if (creditaccount != null && creditaccount.getActive()) {
+                    creditaccount.setActive(false);
+                    creditaccountRepository.save(creditaccount);
+                    creditaccountList.add(creditaccount);
+                }
+            }
+        }
+
+        for (Installment installment : installments) {
+            if (installment.getDueDate().isBefore(LocalDate.now()) && installment.getPayment() == null) {
+                Long creditaccountId = installment.getPurchase().getCreditaccount().getId();
+
+                Creditaccount creditaccount = creditaccountRepository.findById(creditaccountId).orElse(null);
+                if (creditaccount != null && creditaccount.getActive()) {
+                    creditaccount.setActive(false);
+                    creditaccountRepository.save(creditaccount);
+                    creditaccountList.add(creditaccount);
+                }
+            }
+        }
+        return creditaccountList;
+    }
+
+
     @Scheduled(cron = "0 0 0 * * *")
-    public void checkDueDates(){
-        List<Invoice> invoiceList = invoiceRepository.findAll();
-        List<Installment> installmentList = installmentRepository.findAll();
-
-        for (Invoice invoice : invoiceList) {
-            if (invoice.getDueDate().isBefore(LocalDate.now())) {
-                Creditaccount creditaccount = invoice.getPurchases().stream()
-                        .findFirst()
-                        .orElseThrow()
-                        .getCreditaccount();
-                creditaccount.setActive(false);
-                creditaccountRepository.save(creditaccount);
-            }
-        }
-
-        for (Installment installment : installmentList) {
-            if (installment.getDueDate().isBefore(LocalDate.now())) {
-                Creditaccount creditaccount = installment.getPurchase().getCreditaccount();
-                creditaccount.setActive(false);
-                creditaccountRepository.save(creditaccount);
-            }
-        }
+    public void checkDueDatesScheduled() {
+        checkDueDates();
     }
 
 }

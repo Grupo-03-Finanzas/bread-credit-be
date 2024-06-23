@@ -1,9 +1,11 @@
 package com.finanzas.breadcredit.controller;
 
 import com.finanzas.breadcredit.business.PurchaseBusiness;
+import com.finanzas.breadcredit.dto.creditaccount.CreditaccountDtoData;
 import com.finanzas.breadcredit.dto.purchase.PurchaseDtoData;
 import com.finanzas.breadcredit.dto.purchase.PurchaseDtoInsert;
 import com.finanzas.breadcredit.dto.purchase.PurchaseDtoToPayAdmin;
+import com.finanzas.breadcredit.entity.Creditaccount;
 import com.finanzas.breadcredit.entity.Purchase;
 import com.finanzas.breadcredit.exception.ResourceNotFoundException;
 import com.finanzas.breadcredit.utility.UtilityDto;
@@ -72,5 +74,11 @@ public class PurchaseController {
     @ResponseStatus(HttpStatus.OK)
     public List<PurchaseDtoToPayAdmin> listPurchasesToPayAdminSearch(@PathVariable Long id, @PathVariable String search) throws ResourceNotFoundException {
         return purchaseBusiness.listPurchasesToPayAdminSearch(id, search);
+    }
+
+    @PostMapping("/check-due-dates")
+    @ResponseStatus(HttpStatus.OK)
+    public  List<CreditaccountDtoData> checkDueDates() {
+        return UtilityDto.convertToList(purchaseBusiness.checkDueDates(), CreditaccountDtoData.class);
     }
 }

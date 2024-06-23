@@ -22,7 +22,7 @@ public class Installment {
     @Column(name = "installment_id", nullable = false)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "purchase_id", nullable = false)
     private Purchase purchase;
     @OneToOne(fetch = FetchType.LAZY)
