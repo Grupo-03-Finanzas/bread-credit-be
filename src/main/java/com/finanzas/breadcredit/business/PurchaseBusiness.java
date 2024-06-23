@@ -2,15 +2,9 @@ package com.finanzas.breadcredit.business;
 
 import com.finanzas.breadcredit.dto.purchase.PurchaseDtoToPayAdmin;
 import com.finanzas.breadcredit.dto.purchase.PurchaseDtoToPayCustomer;
-import com.finanzas.breadcredit.entity.Creditaccount;
-import com.finanzas.breadcredit.entity.Installment;
-import com.finanzas.breadcredit.entity.Invoice;
-import com.finanzas.breadcredit.entity.Purchase;
+import com.finanzas.breadcredit.entity.*;
 import com.finanzas.breadcredit.exception.ResourceNotFoundException;
-import com.finanzas.breadcredit.repository.CreditaccountRepository;
-import com.finanzas.breadcredit.repository.InstallmentRepository;
-import com.finanzas.breadcredit.repository.InvoiceRepository;
-import com.finanzas.breadcredit.repository.PurchaseRepository;
+import com.finanzas.breadcredit.repository.*;
 import com.finanzas.breadcredit.utility.UtilityFinance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -34,14 +28,15 @@ public class PurchaseBusiness {
     private final CreditaccountRepository creditaccountRepository;
     private final InvoiceRepository invoiceRepository;
     private final InstallmentRepository installmentRepository;
+    private final ProductPurchaseRepository productPurchaseRepository;
 
     @Autowired
-    public PurchaseBusiness(PurchaseRepository purchaseRepository, CreditaccountRepository creditaccountRepository, InvoiceRepository invoiceRepository, InstallmentRepository installmentRepository) {
+    public PurchaseBusiness(PurchaseRepository purchaseRepository, CreditaccountRepository creditaccountRepository, InvoiceRepository invoiceRepository, InstallmentRepository installmentRepository, ProductPurchaseRepository productPurchaseRepository) {
         this.purchaseRepository = purchaseRepository;
         this.creditaccountRepository = creditaccountRepository;
         this.invoiceRepository = invoiceRepository;
         this.installmentRepository = installmentRepository;
-
+        this.productPurchaseRepository = productPurchaseRepository;
     }
 
     public Purchase insertPurchase(Purchase purchase) {
@@ -133,7 +128,24 @@ public class PurchaseBusiness {
 
         for (Invoice invoice : invoices) {
             PurchaseDtoToPayCustomer dto = new PurchaseDtoToPayCustomer();
-            dto.setDescription("en progreso");
+            List<ProductPurchase> productPurchaseList = new ArrayList<>();
+            for (Purchase purchase : invoice.getPurchases()) {
+                List<ProductPurchase> productPurchaseRetrieved = productPurchaseRepository.findByPurchase_Id(purchase.getId());
+                productPurchaseList.addAll(productPurchaseRetrieved);
+            }
+
+            StringBuilder descriptionBuilder = new StringBuilder();
+            for (ProductPurchase productPurchase : productPurchaseList) {
+                descriptionBuilder.append(productPurchase.getProduct().getName())
+                        .append(" ")
+                        .append(productPurchase.getCount())
+                        .append(", ");
+            }
+            if (descriptionBuilder.length() > 0) {
+                descriptionBuilder.setLength(descriptionBuilder.length() - 2);
+            }
+            dto.setDescription(descriptionBuilder.toString());
+
             dto.setInitialCost(invoice.getAmount());
             dto.setDueDate(invoice.getDueDate());
             dto.setTime(invoice.getTime());
@@ -144,7 +156,20 @@ public class PurchaseBusiness {
 
         for (Installment installment : installments) {
             PurchaseDtoToPayCustomer dto = new PurchaseDtoToPayCustomer();
-            dto.setDescription("en progreso");
+            List<ProductPurchase> productPurchaseList = productPurchaseRepository.findByPurchase_Id(installment.getPurchase().getId());
+
+            StringBuilder descriptionBuilder = new StringBuilder();
+            for (ProductPurchase productPurchase : productPurchaseList) {
+                descriptionBuilder.append(productPurchase.getProduct().getName())
+                        .append(" ")
+                        .append(productPurchase.getCount())
+                        .append(", ");
+            }
+            if (descriptionBuilder.length() > 0) {
+                descriptionBuilder.setLength(descriptionBuilder.length() - 2);
+            }
+            dto.setDescription(descriptionBuilder.toString());
+
             dto.setInitialCost(installment.getAmount());
             dto.setInstallmentNumber(installment.getInstallmentNumber());
             dto.setDueDate(installment.getDueDate());
