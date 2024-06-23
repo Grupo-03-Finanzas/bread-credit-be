@@ -30,7 +30,6 @@ import java.util.stream.Collectors;
 @Service
 public class PurchaseBusiness {
 
-
     private final PurchaseRepository purchaseRepository;
     private final CreditaccountRepository creditaccountRepository;
     private final InvoiceRepository invoiceRepository;
@@ -130,7 +129,6 @@ public class PurchaseBusiness {
     public List<PurchaseDtoToPayCustomer> listPurchasesToPayCustomer(Long id) throws ResourceNotFoundException {
         List<Invoice> invoices = invoiceRepository.findInvoiceWithNoPaymentByCustomerId(id);
         List<Installment> installments = installmentRepository.findInstallmentsWithNoPaymentByCustomerId(id);
-        System.out.println("SIZE:" + installments.size());
         List<PurchaseDtoToPayCustomer> dtos = new ArrayList<>();
 
         for (Invoice invoice : invoices) {
