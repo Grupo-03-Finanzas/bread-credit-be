@@ -58,6 +58,9 @@ public class CustomerBusiness {
         customer.setId(id);
         customer.getUser().setId(id);
         Customer customerOld = getCustomerById(id);
+        if (customer.getUser().getPassword() == null) {
+            customer.getUser().setPassword(customerOld.getUser().getPassword());
+        }
         if (!customerOld.getUser().getEmail().equals(customer.getUser().getEmail())) {
             if (userRepository.existsByEmail(customer.getUser().getEmail())) {
                 throw new ResourceConflictException("User with  { email='" + customer.getUser().getEmail() + "' } already exists");

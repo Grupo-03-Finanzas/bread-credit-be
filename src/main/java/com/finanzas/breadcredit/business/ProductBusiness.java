@@ -46,9 +46,9 @@ public class ProductBusiness {
     @Transactional
     public Product updateProduct(Long id, Product product) throws ResourceNotFoundException {
         product.setId(id);
-
-        if (!productRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Product not found");
+        Product oldProduct = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+        if (product.getAdmin() == null) {
+            product.setAdmin(oldProduct.getAdmin());
         }
 
         return productRepository.save(product);
