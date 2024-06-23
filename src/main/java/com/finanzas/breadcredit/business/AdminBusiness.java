@@ -58,6 +58,9 @@ public class AdminBusiness {
         admin.setId(id);
         admin.getUser().setId(id);
         Admin adminOld = getAdminById(id);
+        if (admin.getUser().getPassword() == null) {
+            admin.getUser().setPassword(adminOld.getUser().getPassword());
+        }
         if (!adminOld.getUser().getEmail().equals(admin.getUser().getEmail())) {
             if (userRepository.existsByEmail(admin.getUser().getEmail())) {
                 throw new ResourceConflictException("User with  { email='" + admin.getUser().getEmail() + "' } already exists");
