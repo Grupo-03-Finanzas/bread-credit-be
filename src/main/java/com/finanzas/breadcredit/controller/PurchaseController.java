@@ -5,6 +5,7 @@ import com.finanzas.breadcredit.dto.creditaccount.CreditaccountDtoData;
 import com.finanzas.breadcredit.dto.purchase.PurchaseDtoData;
 import com.finanzas.breadcredit.dto.purchase.PurchaseDtoInsert;
 import com.finanzas.breadcredit.dto.purchase.PurchaseDtoToPayAdmin;
+import com.finanzas.breadcredit.dto.purchase.PurchaseDtoToPayCustomer;
 import com.finanzas.breadcredit.entity.Creditaccount;
 import com.finanzas.breadcredit.entity.Purchase;
 import com.finanzas.breadcredit.exception.ResourceNotFoundException;
@@ -76,9 +77,16 @@ public class PurchaseController {
         return purchaseBusiness.listPurchasesToPayAdminSearch(id, search);
     }
 
+    @GetMapping("/topay/customer/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public List<PurchaseDtoToPayCustomer> listPurchasesToPayCustomer(@PathVariable Long id) throws ResourceNotFoundException {
+        return purchaseBusiness.listPurchasesToPayCustomer(id);
+    }
+
     @PostMapping("/check-due-dates")
     @ResponseStatus(HttpStatus.OK)
     public  List<CreditaccountDtoData> checkDueDates() {
         return UtilityDto.convertToList(purchaseBusiness.checkDueDates(), CreditaccountDtoData.class);
     }
+
 }

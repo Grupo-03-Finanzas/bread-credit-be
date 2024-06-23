@@ -1,6 +1,7 @@
 package com.finanzas.breadcredit.business;
 
 import com.finanzas.breadcredit.dto.purchase.PurchaseDtoToPayAdmin;
+import com.finanzas.breadcredit.dto.purchase.PurchaseDtoToPayCustomer;
 import com.finanzas.breadcredit.entity.Creditaccount;
 import com.finanzas.breadcredit.entity.Installment;
 import com.finanzas.breadcredit.entity.Invoice;
@@ -92,7 +93,7 @@ public class PurchaseBusiness {
             dto.setFullName(firstPurchase.getCreditaccount().getCustomer().getUser().getFirstName() + " " + firstPurchase.getCreditaccount().getCustomer().getUser().getLastName());
             dto.setInitialCost(invoice.getAmount());
             dto.setDueDate(invoice.getDueDate());
-            dto.setTime(firstPurchase.getTime());
+            dto.setTime(invoice.getTime());
             dto.setFinalCost(calculateRealFinalCost(invoice));
             dto.setInvoiceId(invoice.getId());
             dtos.add(dto);
@@ -102,6 +103,50 @@ public class PurchaseBusiness {
             PurchaseDtoToPayAdmin dto = new PurchaseDtoToPayAdmin();
             dto.setDni(installment.getPurchase().getCreditaccount().getCustomer().getUser().getDni());
             dto.setFullName(installment.getPurchase().getCreditaccount().getCustomer().getUser().getFirstName() + " " + installment.getPurchase().getCreditaccount().getCustomer().getUser().getLastName());
+            dto.setInitialCost(installment.getAmount());
+            dto.setInstallmentNumber(installment.getInstallmentNumber());
+            dto.setDueDate(installment.getDueDate());
+            dto.setTime(installment.getPurchase().getTime());
+
+            Purchase purchase = installment.getPurchase();
+            BigDecimal finalCost = purchase.getFinalCost();
+            String creditType = purchase.getCompensatoryRateType();
+            BigDecimal rate = purchase.getCompensatoryRate();
+            Long compounding = purchase.getCompensatoryCompouding();
+            Date dueDate = Date.from(installment.getDueDate().atStartOfDay(ZoneId.systemDefault()).toInstant());
+            Date currentDate = new Date();
+            BigDecimal realFinalCost = UtilityFinance.calcFutureValue(finalCost, creditType, rate, dueDate, currentDate, compounding);
+            String creditType2 = purchase.getPenaltyRateType();
+            BigDecimal rate2 = purchase.getPenaltyRate();
+            Long compounding2 = purchase.getPenaltyCompouding();
+            realFinalCost = UtilityFinance.calcFutureValue(realFinalCost, creditType2, rate2, dueDate, currentDate, compounding2);
+            dto.setFinalCost(realFinalCost);
+            dto.setInstallmentId(installment.getId());
+            dtos.add(dto);
+        }
+
+        return dtos;
+    }
+
+    public List<PurchaseDtoToPayCustomer> listPurchasesToPayCustomer(Long id) throws ResourceNotFoundException {
+        List<Invoice> invoices = invoiceRepository.findInvoiceWithNoPaymentByCustomerId(id);
+        List<Installment> installments = installmentRepository.findInstallmentsWithNoPaymentByCustomerId(id);
+        List<PurchaseDtoToPayCustomer> dtos = new ArrayList<>();
+
+        for (Invoice invoice : invoices) {
+            PurchaseDtoToPayCustomer dto = new PurchaseDtoToPayCustomer();
+            dto.setDescription("en progreso");
+            dto.setInitialCost(invoice.getAmount());
+            dto.setDueDate(invoice.getDueDate());
+            dto.setTime(invoice.getTime());
+            dto.setFinalCost(calculateRealFinalCost(invoice));
+            dto.setInvoiceId(invoice.getId());
+            dtos.add(dto);
+        }
+
+        for (Installment installment : installments) {
+            PurchaseDtoToPayCustomer dto = new PurchaseDtoToPayCustomer();
+            dto.setDescription("en progreso");
             dto.setInitialCost(installment.getAmount());
             dto.setInstallmentNumber(installment.getInstallmentNumber());
             dto.setDueDate(installment.getDueDate());

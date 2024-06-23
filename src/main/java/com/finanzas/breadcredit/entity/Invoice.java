@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Set;
 
@@ -29,6 +30,8 @@ public class Invoice {
     @JoinColumn(name = "payment_id")
     private Payment payment;
 
+    @Column(name ="time")
+    private Instant time;
     @Column(name = "due_date", nullable = false)
     private LocalDate dueDate;
     @Column(name = "amount", nullable = false, precision = 16, scale = 2)

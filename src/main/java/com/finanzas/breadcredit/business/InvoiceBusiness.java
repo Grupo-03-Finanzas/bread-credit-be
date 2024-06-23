@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -97,6 +98,7 @@ public class InvoiceBusiness {
             invoice.setPurchases(purchaseSet);
             invoice.setAmount(totalAmount);
             invoice.setDueDate(LocalDate.now().plusDays(9)); // debido a que se ejecuta el día 1 (+ 9 = 10)
+            invoice.setTime(Instant.now());
             invoices.add(invoice);
             Invoice invoiceToPurchase = insertInvoice(invoice);
             for (Purchase purchase : purchaseSet) {
