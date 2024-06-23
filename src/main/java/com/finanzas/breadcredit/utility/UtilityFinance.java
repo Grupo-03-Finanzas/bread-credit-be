@@ -10,6 +10,9 @@ public class UtilityFinance {
         double period;
         long diffInMillies = currentDate.getTime() - purchaseDate.getTime();
         long diffInDays = diffInMillies / (24 * 60 * 60 * 1000);
+        if (diffInDays < 0) {
+            diffInDays = 0;
+        }
         switch (creditType.charAt(2)) {
             case 'Q':
                 period = 15;

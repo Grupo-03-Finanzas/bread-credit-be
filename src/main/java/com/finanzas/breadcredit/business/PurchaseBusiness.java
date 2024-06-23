@@ -101,24 +101,23 @@ public class PurchaseBusiness {
 
         for (Installment installment : installments) {
             PurchaseDtoToPayAdmin dto = new PurchaseDtoToPayAdmin();
-            dto.setDni(installment.getPurchase().getCreditaccount().getCustomer().getUser().getDni());
-            dto.setFullName(installment.getPurchase().getCreditaccount().getCustomer().getUser().getFirstName() + " " + installment.getPurchase().getCreditaccount().getCustomer().getUser().getLastName());
             dto.setInitialCost(installment.getAmount());
-            dto.setInstallmentNumber(installment.getInstallmentNumber());
             dto.setDueDate(installment.getDueDate());
             dto.setTime(installment.getPurchase().getTime());
+            dto.setDni(installment.getPurchase().getCreditaccount().getCustomer().getUser().getDni());
+            dto.setFullName(installment.getPurchase().getCreditaccount().getCustomer().getUser().getFirstName() + " " + installment.getPurchase().getCreditaccount().getCustomer().getUser().getLastName());
+            dto.setInstallmentNumber(installment.getInstallmentNumber());
 
-            Purchase purchase = installment.getPurchase();
-            BigDecimal finalCost = purchase.getFinalCost();
-            String creditType = purchase.getCompensatoryRateType();
-            BigDecimal rate = purchase.getCompensatoryRate();
-            Long compounding = purchase.getCompensatoryCompouding();
+            BigDecimal finalCost = installment.getAmount();
+            String creditType = installment.getPurchase().getCompensatoryRateType();
+            BigDecimal rate = installment.getPurchase().getCompensatoryRate();
+            Long compounding = installment.getPurchase().getCompensatoryCompouding();
             Date dueDate = Date.from(installment.getDueDate().atStartOfDay(ZoneId.systemDefault()).toInstant());
             Date currentDate = new Date();
             BigDecimal realFinalCost = UtilityFinance.calcFutureValue(finalCost, creditType, rate, dueDate, currentDate, compounding);
-            String creditType2 = purchase.getPenaltyRateType();
-            BigDecimal rate2 = purchase.getPenaltyRate();
-            Long compounding2 = purchase.getPenaltyCompouding();
+            String creditType2 = installment.getPurchase().getPenaltyRateType();
+            BigDecimal rate2 = installment.getPurchase().getPenaltyRate();
+            Long compounding2 = installment.getPurchase().getPenaltyCompouding();
             realFinalCost = UtilityFinance.calcFutureValue(realFinalCost, creditType2, rate2, dueDate, currentDate, compounding2);
             dto.setFinalCost(realFinalCost);
             dto.setInstallmentId(installment.getId());
@@ -131,6 +130,7 @@ public class PurchaseBusiness {
     public List<PurchaseDtoToPayCustomer> listPurchasesToPayCustomer(Long id) throws ResourceNotFoundException {
         List<Invoice> invoices = invoiceRepository.findInvoiceWithNoPaymentByCustomerId(id);
         List<Installment> installments = installmentRepository.findInstallmentsWithNoPaymentByCustomerId(id);
+        System.out.println("SIZE:" + installments.size());
         List<PurchaseDtoToPayCustomer> dtos = new ArrayList<>();
 
         for (Invoice invoice : invoices) {
@@ -152,17 +152,16 @@ public class PurchaseBusiness {
             dto.setDueDate(installment.getDueDate());
             dto.setTime(installment.getPurchase().getTime());
 
-            Purchase purchase = installment.getPurchase();
-            BigDecimal finalCost = purchase.getFinalCost();
-            String creditType = purchase.getCompensatoryRateType();
-            BigDecimal rate = purchase.getCompensatoryRate();
-            Long compounding = purchase.getCompensatoryCompouding();
+            BigDecimal finalCost = installment.getAmount();
+            String creditType = installment.getPurchase().getCompensatoryRateType();
+            BigDecimal rate = installment.getPurchase().getCompensatoryRate();
+            Long compounding = installment.getPurchase().getCompensatoryCompouding();
             Date dueDate = Date.from(installment.getDueDate().atStartOfDay(ZoneId.systemDefault()).toInstant());
             Date currentDate = new Date();
             BigDecimal realFinalCost = UtilityFinance.calcFutureValue(finalCost, creditType, rate, dueDate, currentDate, compounding);
-            String creditType2 = purchase.getPenaltyRateType();
-            BigDecimal rate2 = purchase.getPenaltyRate();
-            Long compounding2 = purchase.getPenaltyCompouding();
+            String creditType2 = installment.getPurchase().getPenaltyRateType();
+            BigDecimal rate2 = installment.getPurchase().getPenaltyRate();
+            Long compounding2 = installment.getPurchase().getPenaltyCompouding();
             realFinalCost = UtilityFinance.calcFutureValue(realFinalCost, creditType2, rate2, dueDate, currentDate, compounding2);
             dto.setFinalCost(realFinalCost);
             dto.setInstallmentId(installment.getId());
