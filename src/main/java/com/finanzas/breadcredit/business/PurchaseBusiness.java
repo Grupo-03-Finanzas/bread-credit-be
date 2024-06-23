@@ -85,7 +85,11 @@ public class PurchaseBusiness {
             PurchaseDtoToPayAdmin dto = new PurchaseDtoToPayAdmin();
             dto.setDni(firstPurchase.getCreditaccount().getCustomer().getUser().getDni());
             dto.setFullName(firstPurchase.getCreditaccount().getCustomer().getUser().getFirstName() + " " + firstPurchase.getCreditaccount().getCustomer().getUser().getLastName());
-            dto.setInitialCost(invoice.getAmount());
+            dto.setInitialCost(
+                    invoice.getPurchases().stream()
+                            .map(Purchase::getInitialCost)
+                            .reduce(BigDecimal.ZERO, BigDecimal::add)
+            );
             dto.setDueDate(invoice.getDueDate());
             dto.setTime(invoice.getTime());
             dto.setFinalCost(calculateRealFinalCost(invoice));
