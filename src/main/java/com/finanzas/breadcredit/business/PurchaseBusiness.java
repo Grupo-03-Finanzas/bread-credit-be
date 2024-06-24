@@ -175,9 +175,6 @@ public class PurchaseBusiness {
                 descriptionBuilder.setLength(descriptionBuilder.length() - 2);
             }
             dto.setDescription(descriptionBuilder.toString());
-
-            System.out.println(installment.getPurchase().getInitialCost());
-            System.out.println(installment.getPurchase().getInstallmentNumber());
             dto.setInitialCost(installment.getPurchase().getInitialCost()
                             .divide(BigDecimal.valueOf(installment.getPurchase().getInstallmentNumber()), 10, RoundingMode.HALF_UP));
             dto.setInstallmentNumber(installment.getInstallmentNumber());
