@@ -9,7 +9,8 @@ public class BreadCreditBeWebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("http://20.172.15.11")
+                .allowedOrigins("http://20.172.15.11",
+                                "http://finanzas-upc.westus3.cloudapp.azure.com")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
                 .allowCredentials(true);
