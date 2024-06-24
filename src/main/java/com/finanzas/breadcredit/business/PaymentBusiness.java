@@ -1,8 +1,13 @@
 package com.finanzas.breadcredit.business;
 
+import com.finanzas.breadcredit.entity.Installment;
+import com.finanzas.breadcredit.entity.Invoice;
 import com.finanzas.breadcredit.entity.Payment;
 import com.finanzas.breadcredit.exception.ResourceNotFoundException;
+import com.finanzas.breadcredit.repository.InstallmentRepository;
+import com.finanzas.breadcredit.repository.InvoiceRepository;
 import com.finanzas.breadcredit.repository.PaymentRepository;
+import com.finanzas.breadcredit.repository.PurchaseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,10 +20,14 @@ public class PaymentBusiness {
 
 
     private final PaymentRepository paymentRepository;
+    private final InvoiceRepository invoiceRepository;
+    private final InstallmentRepository installmentRepository;
 
     @Autowired
-    public PaymentBusiness(PaymentRepository paymentRepository) {
+    public PaymentBusiness(PaymentRepository paymentRepository, InstallmentRepository installmentRepository, InvoiceRepository invoiceRepository) {
         this.paymentRepository = paymentRepository;
+        this.invoiceRepository = invoiceRepository;
+        this.installmentRepository = installmentRepository;
     }
     public Payment getPaymentById(Long id) throws ResourceNotFoundException {
         return paymentRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Payment { id=" + id + " } not found"));
@@ -35,7 +44,21 @@ public class PaymentBusiness {
     public Payment insertPayment(Payment payment) {
         payment.setId(null);
         payment.setTime(Instant.now());
-        return paymentRepository.save(payment);
+
+        Payment savedPayment = paymentRepository.save(payment);
+
+        if (payment.getInvoice()!=null) {
+            Invoice invoice = this.invoiceRepository.findById(payment.getInvoice().getId()).orElse(null);
+            invoice.setPayment(savedPayment);
+            invoiceRepository.save(invoice);
+        }
+        else {
+            Installment installment = this.installmentRepository.findById(payment.getInstallment().getId()).orElse(null);
+            installment.setPayment(savedPayment);
+            installmentRepository.save(installment);
+        }
+
+        return savedPayment;
     }
 
 
