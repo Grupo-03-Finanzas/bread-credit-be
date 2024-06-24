@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -99,7 +100,8 @@ public class PurchaseBusiness {
 
         for (Installment installment : installments) {
             PurchaseDtoToPayAdmin dto = new PurchaseDtoToPayAdmin();
-            dto.setInitialCost(installment.getPurchase().getInitialCost().divide(BigDecimal.valueOf(installment.getPurchase().getInstallmentNumber())));
+            dto.setInitialCost(installment.getPurchase().getInitialCost()
+                    .divide(BigDecimal.valueOf(installment.getPurchase().getInstallmentNumber()), 10, RoundingMode.HALF_UP));
             dto.setDueDate(installment.getDueDate());
             dto.setTime(installment.getPurchase().getTime());
             dto.setDni(installment.getPurchase().getCreditaccount().getCustomer().getUser().getDni());
@@ -173,8 +175,8 @@ public class PurchaseBusiness {
                 descriptionBuilder.setLength(descriptionBuilder.length() - 2);
             }
             dto.setDescription(descriptionBuilder.toString());
-
-            dto.setInitialCost(installment.getPurchase().getInitialCost().divide(BigDecimal.valueOf(installment.getPurchase().getInstallmentNumber())));
+            dto.setInitialCost(installment.getPurchase().getInitialCost()
+                            .divide(BigDecimal.valueOf(installment.getPurchase().getInstallmentNumber()), 10, RoundingMode.HALF_UP));
             dto.setInstallmentNumber(installment.getInstallmentNumber());
             dto.setDueDate(installment.getDueDate());
             dto.setTime(installment.getPurchase().getTime());
