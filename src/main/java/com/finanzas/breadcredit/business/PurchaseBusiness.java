@@ -152,7 +152,11 @@ public class PurchaseBusiness {
             }
             dto.setDescription(descriptionBuilder.toString());
 
-            dto.setInitialCost(invoice.getAmount());
+            dto.setInitialCost(
+                    invoice.getPurchases().stream()
+                            .map(Purchase::getInitialCost)
+                            .reduce(BigDecimal.ZERO, BigDecimal::add)
+            );
             dto.setDueDate(invoice.getDueDate());
             dto.setTime(invoice.getTime());
             dto.setFinalCost(calculateRealFinalCost(invoice));
