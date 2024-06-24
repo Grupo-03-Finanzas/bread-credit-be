@@ -67,6 +67,51 @@ public class InvoiceBusiness {
     }
 
     public List<Invoice> generateInvoices() {
+        ZonedDateTime startOfMonthZoned = LocalDate.now().minusMonths(1).withDayOfMonth(LocalDate.now().minusMonths(1).lengthOfMonth()).atStartOfDay(ZoneId.systemDefault());
+        ZonedDateTime endOfMothZoned = LocalDate.now().plusMonths(1).withDayOfMonth(1).atStartOfDay(ZoneId.systemDefault());
+        List<Purchase> purchases = purchaseRepository.findPurchasesWithoutInstallmentsAndNoInvoice(startOfMonthZoned.toInstant());
+        List<InvoiceDtoInsert.PurchaseDto> purchaseDtoInserts = UtilityDto.convertToList(purchases, InvoiceDtoInsert.PurchaseDto.class);
+
+        Map<Long, List<InvoiceDtoInsert.PurchaseDto>> groupedPurchases = new HashMap<>();
+        List<Invoice> invoices = new ArrayList<>();
+
+        for (InvoiceDtoInsert.PurchaseDto purchase : purchaseDtoInserts) {
+            Long creditAccountId = purchase.getCreditaccount().getId();
+            groupedPurchases.computeIfAbsent(creditAccountId, k -> new ArrayList<>()).add(purchase);
+        }
+
+        for (Map.Entry<Long, List<InvoiceDtoInsert.PurchaseDto>> entry : groupedPurchases.entrySet()) {
+            Set<Purchase> purchaseSet = new HashSet<>(UtilityDto.convertToList(entry.getValue(), Purchase.class));
+
+            for (Purchase purchase : purchaseSet) {
+                BigDecimal presentValue = purchase.getInitialCost();
+                String creditType = purchase.getCreditRateType();
+                BigDecimal rate = purchase.getCreditRate();
+                Long compounding = purchase.getCreditCompouding();
+                Date purchaseDate = Date.from(purchase.getTime());
+                Date currentDate = Date.from(endOfMothZoned.toInstant());
+                BigDecimal finalCost = UtilityFinance.calcFutureValue(presentValue, creditType, rate, purchaseDate, currentDate, compounding);
+                purchase.setFinalCost(finalCost);
+                purchaseRepository.save(purchase);
+            }
+            BigDecimal totalAmount = purchaseSet.stream().map(Purchase::getFinalCost).reduce(BigDecimal.ZERO, BigDecimal::add);
+            Invoice invoice = new Invoice();
+            invoice.setPurchases(purchaseSet);
+            invoice.setAmount(totalAmount);
+            invoice.setDueDate(LocalDate.now().withDayOfMonth(LocalDate.now().lengthOfMonth()).plusDays(9)); // debido a que se ejecuta el día 1 (+ 9 = 10)
+            invoice.setTime(endOfMothZoned.toInstant());
+            invoices.add(invoice);
+            Invoice invoiceToPurchase = insertInvoice(invoice);
+            for (Purchase purchase : purchaseSet) {
+                purchase.setInvoice(invoiceToPurchase);
+                purchaseRepository.save(purchase);
+            }
+        }
+        return invoices;
+    }
+
+    @Scheduled(cron = "0 0 0 1 * ?")
+    public void generateInvoicesScheduled() {
         ZonedDateTime startOfMonthZoned = LocalDate.now().minusMonths(1).withDayOfMonth(1).atStartOfDay(ZoneId.systemDefault());
         List<Purchase> purchases = purchaseRepository.findPurchasesWithoutInstallmentsAndNoInvoice(startOfMonthZoned.toInstant());
         List<InvoiceDtoInsert.PurchaseDto> purchaseDtoInserts = UtilityDto.convertToList(purchases, InvoiceDtoInsert.PurchaseDto.class);
@@ -106,11 +151,6 @@ public class InvoiceBusiness {
                 purchaseRepository.save(purchase);
             }
         }
-        return invoices;
-    }
-    @Scheduled(cron = "0 0 0 1 * ?")
-    public void generateInvoicesScheduled() {
-        generateInvoices();
     }
 
 }
